@@ -1,0 +1,23 @@
+.select-ing-container {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.select-ing-container label {
+  font-weight: 600;
+  color: #374151;
+}
+
+.select-ing {
+  border: 1px solid #d1d5db;
+  border-radius: 8px;
+  padding: 10px;
+  background: #fff;
+  cursor: pointer;
+  transition: border-color 0.3s;
+}
+
+.select-ing:focus {
+  border-color: #16a34a;
+}

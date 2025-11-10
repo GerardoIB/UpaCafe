@@ -1,0 +1,66 @@
+.agregar-trabajador-container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background-color: #f4f4f9;
+  font-family: 'Inter', sans-serif;
+}
+
+.agregar-trabajador-form {
+  background-color: #fff;
+  padding: 30px 40px;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  width: 400px;
+}
+
+.agregar-trabajador-form h2 {
+  text-align: center;
+  color: #2f5233;
+  margin-bottom: 25px;
+}
+
+.agregar-trabajador-form label {
+  display: block;
+  margin-bottom: 6px;
+  color: #555;
+  font-weight: 500;
+}
+
+.agregar-trabajador-form input {
+  width: 100%;
+  padding: 10px;
+  margin-bottom: 18px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  outline: none;
+  transition: border-color 0.2s ease;
+  font-size: 14px;
+}
+
+.agregar-trabajador-form input:focus {
+  border-color: #2f5233;
+}
+
+.agregar-trabajador-form button {
+  width: 100%;
+  background-color: #2f5233;
+  color: #fff;
+  padding: 10px;
+  border: none;
+  border-radius: 8px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.2s ease;
+}
+
+.agregar-trabajador-form button:hover {
+  background-color: #244124;
+}
+
+.mensaje {
+  text-align: center;
+  font-weight: bold;
+  margin-top: 10px;
+}

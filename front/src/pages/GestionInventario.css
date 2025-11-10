@@ -1,0 +1,50 @@
+.gestion-inventario-wrapper {
+  margin-top: 60px; /* espacio del header global */
+  padding: 20px;
+  background-color: var(--crema);
+  min-height: calc(100vh - 60px);
+  display: flex;
+  flex-direction: column;
+  overflow-y: auto;
+}
+
+.titulo-principal {
+  font-size: 1.8rem;
+  color: var(--verde-oscuro);
+  margin-bottom: 1rem;
+  text-align: left; /* título de sección */
+}
+
+/* TabView */
+.tabview-inventario {
+  background-color: white;
+  border-radius: 1rem;
+  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}
+
+.p-tabview-nav {
+  background-color: #e3f2fd;
+  border-radius: 1rem 1rem 0 0;
+}
+
+.p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  background-color: var(--verde-oscuro) !important;
+  color: var(--crema) !important;
+}
+
+.p-tabview-nav-link {
+  color: var(--verde-oscuro) !important;
+  font-weight: 600;
+}
+
+.p-tabview-panels {
+  flex-grow: 1;
+  padding: 1rem;
+  overflow-y: auto;
+  background-color: #fff;
+  border-radius: 0 0 1rem 1rem;
+}

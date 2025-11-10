@@ -1,0 +1,17 @@
+.orders-page {
+  padding: 20px;
+  background-color: #f9f9f9;
+  min-height: calc(100vh - 60px);
+}
+
+.orders-page h1 {
+  color: #2e7d32;
+  margin-bottom: 20px;
+}
+
+.loading-screen {
+  text-align: center;
+  color: #2e7d32;
+  padding: 50px;
+  font-size: 1.2rem;
+}

@@ -1,0 +1,166 @@
+:root {
+  --verde-oscuro: #2e7d32;
+  --verde-claro: #66bb6a;
+  --cafe-oscuro: #4e342e;
+  --crema: #f1f8e9;
+}
+
+/* === HEADER GENERAL === */
+.header {
+  position: fixed;
+  top: 0;
+  left: 220px; /* 👈 separa del sidebar abierto */
+  height: 65px;
+  right: 0;
+  background: linear-gradient(90deg, var(--verde-oscuro), var(--cafe-oscuro));
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 0 25px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.2);
+  z-index: 150; /* debajo de notificaciones, pero sobre el contenido */
+  transition: left 0.3s ease; /* animación suave al colapsar */
+}
+
+/* Cuando la sidebar está colapsada */
+.header.collapsed {
+  left: 70px; /* 👈 se ajusta al ancho reducido */
+}
+
+/* === LADO IZQUIERDO === */
+.header-left {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.header-title {
+  font-size: 1.3rem;
+  font-weight: bold;
+  color: var(--crema);
+  letter-spacing: 0.5px;
+}
+
+/* === LADO DERECHO === */
+.header-right {
+  display: flex;
+  align-items: center;
+  gap: 15px;
+  color: white;
+  position: relative;
+  overflow: visible;
+}
+
+/* === CAMPANA DE NOTIFICACIONES === */
+.notification-container {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.bell-icon {
+  font-size: 1.6rem;
+  cursor: pointer;
+  color: var(--crema);
+  transition: color 0.2s;
+}
+
+.bell-icon:hover {
+  color: var(--verde-claro);
+}
+
+.badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background-color: #ff5252;
+  color: white;
+  border-radius: 50%;
+  padding: 3px 7px;
+  font-size: 0.7rem;
+}
+
+/* Panel de notificaciones */
+.notification-panel {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 260px;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+  color: #333;
+  z-index: 500;
+  padding: 10px;
+}
+
+.notification-panel h4 {
+  margin: 5px 0 10px;
+  font-size: 1rem;
+  color: var(--verde-oscuro);
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 5px;
+}
+
+.notification-panel ul {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+}
+
+.notification-panel li {
+  margin-bottom: 8px;
+  font-size: 0.9rem;
+}
+
+.notification-panel .time {
+  font-size: 0.7rem;
+  color: #888;
+}
+
+.no-notifications {
+  font-size: 0.9rem;
+  color: #777;
+  text-align: center;
+}
+
+/* === USUARIO === */
+.user-icon {
+  font-size: 1.8rem;
+  color: var(--crema);
+}
+
+.user-info {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  text-align: right;
+}
+
+.user-name {
+  font-weight: bold;
+  color: var(--crema);
+}
+
+.user-email {
+  font-size: 12px;
+  color: #dcedc8;
+}
+
+/* === BOTÓN CERRAR SESIÓN === */
+.logout-btn {
+  margin-left: 10px;
+  padding: 6px 12px;
+  background-color: var(--verde-claro);
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+  transition: background 0.2s, transform 0.1s;
+}
+
+.logout-btn:hover {
+  background-color: #81c784;
+  transform: scale(1.03);
+}

@@ -1,0 +1,46 @@
+.ticket-container {
+  width: 320px;
+  margin: 20px auto;
+  background: #fff;
+  border-radius: 12px;
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+  font-family: 'Inter', sans-serif;
+  overflow: hidden;
+}
+
+.ticket-header {
+  background-color: #3c6e71;
+  color: white;
+  text-align: center;
+  padding: 12px;
+}
+
+.ticket-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
+}
+
+.ticket-body {
+  padding: 16px;
+  line-height: 1.6;
+  color: #333;
+}
+
+.ticket-body hr {
+  border: 0;
+  border-top: 1px solid #ddd;
+  margin: 10px 0;
+}
+
+.ticket-footer {
+  background: #f7f7f7;
+  padding: 12px;
+  text-align: center;
+  font-weight: 500;
+}
+
+.ticket-footer .gracias {
+  color: #3c6e71;
+  font-weight: bold;
+  margin-top: 5px;
+}

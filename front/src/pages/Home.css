@@ -1,0 +1,20 @@
+.home-container {
+  text-align: center;
+  padding: 2rem;
+}
+
+h1 {
+  color: #4a2c2a;
+}
+
+p {
+  color: #555;
+  margin-bottom: 1.5rem;
+}
+
+.productos-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: 1.5rem;
+  justify-items: center;
+}

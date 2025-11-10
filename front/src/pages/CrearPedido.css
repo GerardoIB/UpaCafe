@@ -1,0 +1,239 @@
+/* 🌿 Paleta de colores */
+:root {
+  --verde-oscuro: #2e7d32;
+  --verde-claro: #66bb6a;
+  --verde-oliva: #3e6b48;
+  --crema: #f9fff6;
+  --blanco: #ffffff;
+  --gris-claro: #e0e0e0;
+  --gris-texto: #444;
+  --sombra-suave: rgba(0, 0, 0, 0.08);
+}
+
+/* 🧩 Contenedor principal */
+.crear-pedido-container {
+  margin-left: 240px;
+  padding: 40px;
+  background: linear-gradient(135deg, #f1f8e9, #ffffff);
+  min-height: 100vh;
+  font-family: "Poppins", sans-serif;
+  transition: background 0.3s ease-in-out;
+}
+
+.crear-pedido-container h2 {
+  color: var(--verde-oscuro);
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  font-size: 2rem;
+  margin-bottom: 25px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+}
+
+/* 📝 Formulario */
+.pedido-form {
+  background: var(--blanco);
+  padding: 30px 35px;
+  border-radius: 16px;
+  max-width: 580px;
+  margin: 0 auto;
+  box-shadow: 0 6px 20px var(--sombra-suave);
+  display: flex;
+  flex-direction: column;
+  transition: transform 0.2s ease-in-out;
+}
+
+.pedido-form:hover {
+  transform: translateY(-2px);
+}
+
+/* Label */
+.pedido-form label {
+  margin-top: 18px;
+  color: var(--verde-oliva);
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+/* Inputs y select con íconos */
+.input-icon {
+  display: flex;
+  align-items: center;
+  background: var(--blanco);
+  border: 1.5px solid var(--verde-claro);
+  border-radius: 10px;
+  padding: 8px 12px;
+  margin-top: 6px;
+  box-shadow: 0 2px 6px var(--sombra-suave);
+  transition: all 0.3s ease;
+}
+
+.input-icon:hover,
+.input-icon:focus-within {
+  border-color: var(--verde-oscuro);
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
+}
+
+.input-icon svg {
+  font-size: 1.2rem;
+  color: var(--verde-oscuro);
+  margin-right: 10px;
+  flex-shrink: 0;
+}
+
+.input-icon select,
+.input-icon input,
+.input-icon textarea {
+  border: none;
+  width: 100%;
+  padding: 8px;
+  font-size: 1rem;
+  outline: none;
+  background: transparent;
+  color: var(--gris-texto);
+}
+
+textarea {
+  resize: none;
+  height: 90px;
+  line-height: 1.4;
+}
+
+/* 🧂 Ingredientes */
+.ingredientes-section {
+  margin-top: 18px;
+  padding: 12px 15px;
+  background: var(--crema);
+  border-radius: 10px;
+  border: 1px solid var(--verde-claro);
+  box-shadow: 0 2px 8px var(--sombra-suave);
+}
+
+.ingredientes-section label {
+  color: var(--verde-oscuro);
+  font-weight: 600;
+}
+
+.ingredientes-list {
+  margin-top: 10px;
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+  gap: 6px;
+}
+
+.ingrediente-item {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background: var(--blanco);
+  padding: 6px 10px;
+  border-radius: 8px;
+  border: 1px solid var(--gris-claro);
+  transition: all 0.2s ease-in-out;
+  cursor: pointer;
+}
+
+.ingrediente-item:hover {
+  background: var(--verde-claro);
+  color: white;
+  border-color: var(--verde-oscuro);
+}
+
+.ingrediente-item input {
+  accent-color: var(--verde-oscuro);
+}
+
+/* ➕ Botones */
+.btn-add {
+  margin-top: 20px;
+  background: var(--verde-claro);
+  color: white;
+  font-weight: 600;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 15px;
+  cursor: pointer;
+  font-size: 0.95rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  box-shadow: 0 3px 8px var(--sombra-suave);
+  transition: all 0.3s ease-in-out;
+}
+
+.btn-add:hover {
+  background: var(--verde-oscuro);
+  transform: translateY(-1px);
+}
+
+.btn-submit {
+  margin-top: 25px;
+  padding: 14px;
+  background: linear-gradient(90deg, var(--verde-oscuro), var(--verde-claro));
+  color: white;
+  font-weight: 700;
+  border: none;
+  border-radius: 12px;
+  cursor: pointer;
+  font-size: 1rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
+  box-shadow: 0 6px 14px rgba(102, 187, 106, 0.4);
+  transition: all 0.3s ease;
+}
+
+.btn-submit:hover {
+  background: linear-gradient(90deg, var(--verde-claro), var(--verde-oscuro));
+  transform: translateY(-1px);
+}
+
+/* 🗑 Botón eliminar producto */
+.btn-delete {
+  background: transparent;
+  border: none;
+  color: #d32f2f;
+  cursor: pointer;
+  margin-left: 8px;
+  transition: transform 0.2s ease;
+}
+
+.btn-delete:hover {
+  transform: scale(1.2);
+  color: #b71c1c;
+}
+
+/* 📦 Producto item */
+.producto-item {
+  background: #fafafa;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 6px var(--sombra-suave);
+  margin-bottom: 20px;
+  border-left: 4px solid var(--verde-claro);
+  transition: transform 0.2s ease-in-out;
+}
+
+.producto-item:hover {
+  transform: translateY(-3px);
+}
+
+/* 📱 Responsive */
+@media (max-width: 768px) {
+  .crear-pedido-container {
+    margin-left: 0;
+    padding: 20px;
+  }
+
+  .pedido-form {
+    width: 100%;
+    padding: 20px;
+  }
+
+  .ingredientes-list {
+    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  }
+}

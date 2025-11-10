@@ -1,0 +1,45 @@
+/* Colores base inspirados en cafetería */
+:root {
+  --verde-oscuro: #2e7d32;
+  --verde-claro: #81c784;
+  --cafe-oscuro: #5d4037;
+  --crema: #f5f5f5;
+}
+
+/* Navbar container */
+.navbar-container {
+  background-color: var(--verde-oscuro);
+  color: white;
+  padding: 1rem 2rem;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  font-family: 'Poppins', sans-serif;
+}
+
+/* Logo o nombre de la cafetería */
+.navbar-logo {
+  font-size: 1.7rem;
+  font-weight: bold;
+  color: var(--crema);
+}
+
+/* Enlaces */
+.navbar-links {
+  display: flex;
+  gap: 1.5rem;
+  list-style: none;
+}
+
+.navbar-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  transition: color 0.3s ease, transform 0.2s;
+}
+
+.navbar-links a:hover {
+  color: var(--verde-claro);
+  transform: scale(1.05);
+}

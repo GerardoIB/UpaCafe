@@ -1,0 +1,66 @@
+.producto-card {
+  background-color: #f1f8e9;
+  border: 1px solid #a5d6a7;
+  border-radius: 16px;
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.1);
+  padding: 1.2rem;
+  width: 180px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.producto-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 14px rgba(46, 125, 50, 0.2);
+}
+
+.producto-icon-container {
+  background-color: #c8e6c9;
+  border-radius: 50%;
+  width: 80px;
+  height: 80px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.producto-icon {
+  color: #2e7d32;
+  font-size: 40px;
+}
+
+h3 {
+  color: #2e7d32;
+  font-size: 1.1rem;
+  text-align: center;
+  margin: 8px 0;
+}
+
+.producto-precio {
+  font-weight: bold;
+  color: #1b5e20;
+  margin-bottom: 10px;
+}
+
+.pedido-btn {
+  background-color: #2e7d32;
+  color: white;
+  border: none;
+  padding: 0.5rem 1rem;
+  border-radius: 8px;
+  cursor: pointer;
+  transition: 0.3s;
+  font-weight: bold;
+}
+
+.pedido-btn:hover {
+  background-color: #388e3c;
+}
+
+.pedido-btn:disabled {
+  background-color: #a5d6a7;
+  cursor: not-allowed;
+}
