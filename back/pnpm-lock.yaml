@@ -38,9 +38,6 @@ importers:
       nodemailer:
         specifier: ^7.0.10
         version: 7.0.10
-      puppeteer:
-        specifier: 18.2.1
-        version: 18.2.1
       qrcode-terminal:
         specifier: ^0.12.0
         version: 0.12.0
