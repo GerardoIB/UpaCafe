@@ -285,13 +285,14 @@ export class clientsController {
     }
     forgotPassword = async (req, res) => {
         try {
-            const { resetEmail } = req.body;
+            const { email } = req.body;
+            console.log(req.body)
 
-            if (!resetEmail) {
+            if (!email) {
                 return res.status(400).json({ message: 'Email is required' });
             }
 
-            const user = await this.ClientsModel.validateEmail(resetEmail);
+            const user = await this.ClientsModel.validateEmail(email);
 
             if (!user) {
                 return res.status(404).json({ message: 'This email is not registered' });
@@ -301,7 +302,7 @@ export class clientsController {
 
             // Generar token temporal de 15 minutos
             const token = jwt.sign(
-                { id: user.id, resetEmail },
+                { id: user.id, email },
                 JWT_SECRET,
                 { expiresIn: '15m' }
             );
@@ -310,7 +311,7 @@ export class clientsController {
            
 
             // Enviar correo
-            await sendResetPassword(resetEmail, token);
+            await sendResetPassword(email, token);
 
             return res.status(200).json({ message: 'Reset link sent to your email' });
 
@@ -334,7 +335,7 @@ export class clientsController {
     console.log(decoded)
 
     // Cambiar contraseña en la BD
-    const result =  await this.ClientsModel.updatePassword(decoded.resetEmail, newPassword);
+    const result =  await this.ClientsModel.updatePassword(decoded.email, newPassword);
     console.log(result)
 
     return res.status(200).json({ message: 'Password updated successfully' });

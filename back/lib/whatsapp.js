@@ -6,24 +6,15 @@ import { fa } from "zod/locales";
 // Configuración para Brave en Fedora
 export const whatsapp = new Client({
     puppeteer: {
-        headless: true, // Puedes cambiar a false para desarrollo
-        executablePath: '/usr/bin/brave-browser', // Ruta de Brave en Fedora
+        headless: true,
         args: [
             '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--disable-gpu',
-            '--disable-software-rasterizer',
-            '--disable-background-timer-throttling',
-            '--disable-backgrounding-occluded-windows',
-            '--disable-renderer-backgrounding'
+            '--disable-setuid-sandbox'
         ]
     },
     authStrategy: new LocalAuth()
 });
+
 
 whatsapp.on('qr', qr => {
     qrcode.generate(qr, {
