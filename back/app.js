@@ -16,7 +16,7 @@ const app = express()
 const server = http.createServer(app)
 const io = new SocketServer(server,{
     cors:{
-        origin: "http://localhost:5173", // o el puerto de tu frontend
+        origin: "http://localhost:5174", // o el puerto de tu frontend
     credentials: true}
 })
 app.use(corsMiddleware)
@@ -25,7 +25,7 @@ app.use(express.json())
 app.use('/api/orders', createRouterOrders({ordersModel,io}))
 app.use('/api/user',createRouter({ClientsModel,io}))
 
-whatsapp.initialize()
+        whatsapp.initialize()        
 
 
 const PORT = process.env.PORT ?? 3000;

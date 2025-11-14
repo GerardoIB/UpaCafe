@@ -1,5 +1,6 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
+import { email } from 'zod';
 
 dotenv.config();
 
@@ -21,6 +22,22 @@ export const sendVerificationEmail = async (email, token) => {
       <h2>Verifica tu cuenta</h2>
       <p>Haz clic en el siguiente enlace para activar tu cuenta:</p>
       <a href="${link}">${link}</a>
+    `
+  });
+  };
+export const sendResetPassword = async (email, token) => {
+  const link = `http://localhost:5174/reset-password?token=${token}`;
+
+  await transporter.sendMail({
+    from: '"Cafetería UPA" <no-reply@cafeteria.com>',
+    to: email,
+    subject: 'Restablece tu contraseña',
+    html: `
+      <h2>Solicitaste restablecer tu contraseña</h2>
+      <p>Haz clic en el siguiente enlace para crear una nueva contraseña. Este enlace expira en <b>15 minutos</b>:</p>
+      <a href="${link}">${link}</a>
+      <br /><br />
+      <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
     `
   });
 };

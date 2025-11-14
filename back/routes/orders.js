@@ -1,11 +1,12 @@
 import { Router } from "express";
 import { OrdersController } from "../Controllers/ordersController.js";
 
-export const createRouterOrders = ({ordersModel})=>{
+
+export const createRouterOrders = ({ordersModel,io})=>{
     const orderRouter = Router()
 
 
-    const ordersController = new OrdersController({ordersModel})
+    const ordersController = new OrdersController({ordersModel,io})
 
     orderRouter.post('/createProduct', ordersController.createProducto)
     orderRouter.post('/addIngretes', ordersController.addIngretes)

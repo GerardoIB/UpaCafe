@@ -1,6 +1,6 @@
 import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
-import { sendVerificationEmail } from "../utils/mailer.js";
+import { sendVerificationEmail, sendResetPassword } from "../utils/mailer.js";
 import { messager } from "../utils/messager.js";
 
 dotenv.config();
@@ -9,12 +9,12 @@ dotenv.config();
 
 
 export class clientsController {
-    constructor({ ClientsModel,io }) {
+    constructor({ ClientsModel, io }) {
         this.ClientsModel = ClientsModel
         this.io = io
     }
-    /*
-   createUser = async (req, res) => {
+
+    createUser = async (req, res) => {
         try {
             const { email, password, name, phone } = req.body;
             console.log(req.body);
@@ -258,93 +258,160 @@ export class clientsController {
     }
     updateStatusNot = async (req, res) => {
         const { id } = req.params
-        try{
-            const [result ] = await this.ClientsModel.updateStatusNot(id)
-            res.status(200).json({message:'han sido leidas'})
-        }catch(e){
-            res.status(500).json({message:'Algo ha salido mal'})
+        try {
+            const [result] = await this.ClientsModel.updateStatusNot(id)
+            res.status(200).json({ message: 'han sido leidas' })
+        } catch (e) {
+            res.status(500).json({ message: 'Algo ha salido mal' })
             console.log(e)
         }
     }
     updatePassword = async (req, res) => {
-        const { email, password} = req.body
-
-        try{
-            console.log(email,password)
-            const result = await this.ClientsModel.updatePassword(email,password)
-            console.log(result)
-            res.status(200).json({message:'ha sido actualizada'})
-        }catch(e){
-            res.status(500).json({message:'Algo ha salido mal'})
-            console.log(e)
+        const { email, password } = req.body
+        const isVerificate = this.ClientsModel.isVerificate(email)
+        if (isVerificate) {
+            try {
+                console.log(email, password)
+                const result = await this.ClientsModel.updatePassword(email, password)
+                console.log(result)
+                res.status(200).json({ message: 'ha sido actualizada' })
+            } catch (e) {
+                res.status(500).json({ message: 'Algo ha salido mal' })
+                console.log(e)
+            }
+        } else {
+            res.status(401).json({ message: "Debes estar verificado" })
         }
     }
-        */
-      create = async (req,res) => {
-     try {
-       const { pkPhone, name, firstName, lastName, gender, birthday, password } = req.body;
+    forgotPassword = async (req, res) => {
+        try {
+            const { resetEmail } = req.body;
 
-       // Required fields check
-       if (!pkPhone || !name || !firstName || !lastName || !gender || !birthday || !password) {
-         return res.status(400).json({ message: 'All fields are required: pkPhone, name, firstName, lastName, gender, birthday, password' });
-       }
+            if (!resetEmail) {
+                return res.status(400).json({ message: 'Email is required' });
+            }
 
-       // Basic types and formats
-       const phoneStr = String(pkPhone).trim();
-       if (!/^\+?\d{7,15}$/.test(phoneStr)) {
-         return res.status(400).json({ message: 'pkPhone must be a phone number with 7-15 digits, optional leading +' });
-       }
+            const user = await this.ClientsModel.validateEmail(resetEmail);
 
-       if (typeof name !== 'string' || name.trim().length === 0 ||
-           typeof firstName !== 'string' || firstName.trim().length === 0 ||
-           typeof lastName !== 'string' || lastName.trim().length === 0) {
-         return res.status(400).json({ message: 'name, firstName and lastName must be non-empty strings' });
-       }
+            if (!user) {
+                return res.status(404).json({ message: 'This email is not registered' });
+            }
 
-       const allowedGenders = ['male','female','other','m','f','o','Male','Female','Other'];
-       if (!allowedGenders.includes(String(gender))) {
-         return res.status(400).json({ message: `gender must be one of: ${allowedGenders.join(', ')}` });
-       }
+            const JWT_SECRET = process.env.JWT_SECRET;
 
-       // Validate birthday (ISO yyyy-mm-dd or any parsable date)
-       const parsedDate = Date.parse(birthday);
-       if (Number.isNaN(parsedDate)) {
-         return res.status(400).json({ message: 'birthday must be a valid date (e.g. YYYY-MM-DD)' });
-       }
+            // Generar token temporal de 15 minutos
+            const token = jwt.sign(
+                { id: user.id, resetEmail },
+                JWT_SECRET,
+                { expiresIn: '15m' }
+            );
 
-       if (typeof password !== 'string' || password.length < 6) {
-         return res.status(400).json({ message: 'password must be at least 6 characters long' });
-       }
+            // Opcional: guardar token en BD si lo deseas
+           
 
-       // Create user via model
-       const payload = {
-         pkPhone: phoneStr,
-         name: name.trim(),
-         firstName: firstName.trim(),
-         lastName: lastName.trim(),
-         gender: String(gender).trim(),
-         birthday: new Date(parsedDate).toISOString().split('T')[0],
-         password
-       };
+            // Enviar correo
+            await sendResetPassword(resetEmail, token);
 
-       const result = await this.ClientsModel.createuser(payload);
+            return res.status(200).json({ message: 'Reset link sent to your email' });
 
-       // If model returns result with insertId or similar
-       if (result && result.insertId) {
-         return res.status(201).json({ message: 'User created', id: result.insertId });
-       }
+        } catch (error) {
+            console.error(error);
+            res.status(500).json({ message: 'Unexpected error sending reset email' });
+        }
+    };
+    resetPassword = async (req, res) => {
+  try {
+    const { token, newPassword } = req.body;
 
-       // Otherwise return generic success
-       return res.status(201).json({ message: 'User created', result });
+    if (!token || !newPassword) {
+      return res.status(400).json({ message: 'Token and new password are required' });
+    }
 
-     } catch (err) {
-       // handle duplicate entry from DB
-       if (err && err.code === 'ER_DUP_ENTRY') {
-         return res.status(409).json({ message: 'Duplicate entry (phone or user already exists)' });
-       }
-       console.error(err);
-       return res.status(500).json({ message: 'Unexpected error creating user' });
-     }
+    const JWT_SECRET = process.env.JWT_SECRET;
+
+    // Verificar token
+    const decoded = jwt.verify(token, JWT_SECRET);
+    console.log(decoded)
+
+    // Cambiar contraseña en la BD
+    const result =  await this.ClientsModel.updatePassword(decoded.resetEmail, newPassword);
+    console.log(result)
+
+    return res.status(200).json({ message: 'Password updated successfully' });
+
+  } catch (error) {
+    console.error(error);
+    return res.status(400).json({ message: 'Invalid or expired token' });
+  }
+};
+
+    /*
+  create = async (req,res) => {
+ try {
+   const { pkPhone, name, firstName, lastName, gender, birthday, password } = req.body;
+
+   // Required fields check
+   if (!pkPhone || !name || !firstName || !lastName || !gender || !birthday || !password) {
+     return res.status(400).json({ message: 'All fields are required: pkPhone, name, firstName, lastName, gender, birthday, password' });
    }
+
+   // Basic types and formats
+   const phoneStr = String(pkPhone).trim();
+   if (!/^\+?\d{7,15}$/.test(phoneStr)) {
+     return res.status(400).json({ message: 'pkPhone must be a phone number with 7-15 digits, optional leading +' });
+   }
+
+   if (typeof name !== 'string' || name.trim().length === 0 ||
+       typeof firstName !== 'string' || firstName.trim().length === 0 ||
+       typeof lastName !== 'string' || lastName.trim().length === 0) {
+     return res.status(400).json({ message: 'name, firstName and lastName must be non-empty strings' });
+   }
+
+   const allowedGenders = ['male','female','other','m','f','o','Male','Female','Other'];
+   if (!allowedGenders.includes(String(gender))) {
+     return res.status(400).json({ message: `gender must be one of: ${allowedGenders.join(', ')}` });
+   }
+
+   // Validate birthday (ISO yyyy-mm-dd or any parsable date)
+   const parsedDate = Date.parse(birthday);
+   if (Number.isNaN(parsedDate)) {
+     return res.status(400).json({ message: 'birthday must be a valid date (e.g. YYYY-MM-DD)' });
+   }
+
+   if (typeof password !== 'string' || password.length < 6) {
+     return res.status(400).json({ message: 'password must be at least 6 characters long' });
+   }
+
+   // Create user via model
+   const payload = {
+     pkPhone: phoneStr,
+     name: name.trim(),
+     firstName: firstName.trim(),
+     lastName: lastName.trim(),
+     gender: String(gender).trim(),
+     birthday: new Date(parsedDate).toISOString().split('T')[0],
+     password
+   };
+
+   const result = await this.ClientsModel.createuser(payload);
+
+   // If model returns result with insertId or similar
+   if (result && result.insertId) {
+     return res.status(201).json({ message: 'User created', id: result.insertId });
+   }
+
+   // Otherwise return generic success
+   return res.status(201).json({ message: 'User created', result });
+
+ } catch (err) {
+   // handle duplicate entry from DB
+   if (err && err.code === 'ER_DUP_ENTRY') {
+     return res.status(409).json({ message: 'Duplicate entry (phone or user already exists)' });
+   }
+   console.error(err);
+   return res.status(500).json({ message: 'Unexpected error creating user' });
+ }
+}
+ */
 
 }

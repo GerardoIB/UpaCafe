@@ -5,7 +5,7 @@ export const createRouter = ({ClientsModel,io})=>{
 
     const userController = new clientsController({ClientsModel})
 
-     /*userRouter.post('/register',userController.createUser)
+     userRouter.post('/register',userController.createUser)
     userRouter.post('/login',userController.login)
     userRouter.get('/protected',userController.verifyToken)
     userRouter.delete('/removeUser/:id',userController.removeAcount)
@@ -22,9 +22,12 @@ export const createRouter = ({ClientsModel,io})=>{
     userRouter.get('/getStats', userController.getStats )
     userRouter.get('/notificaciones/:id', userController.getNot)
     userRouter.get('/readNotifiactions/:id', userController.updateStatusNot)
-    userRouter.patch('/updatePassword',userController.updatePassword)
-    */
+    userRouter.post('/forgotPassword',userController.forgotPassword)
+    userRouter.patch('/reset-password', userController.resetPassword)
+
+    /*
    userRouter.post('/register', userController.create)
+   */
    
 
     return userRouter

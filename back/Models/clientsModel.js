@@ -18,9 +18,10 @@ const DEFAULT_CONF =
 }
 const connectionString = process.env.DATABSE_URL ?? DEFAULT_CONF
 const conection = await mysql.createConnection(connectionString);
+console.log(process.env.DB_DB)
 
 export class ClientsModel {
-  /*
+  
   static async login({ email, password }) {
     const passwordDb = await conection.query(
       'SELECT password FROM usuarios WHERE email = ? ',
@@ -325,7 +326,22 @@ export class ClientsModel {
       console.log(e)
     }
   }
-    */
+  static async isVerificate(email) {
+        try {
+            const [result] = await conection.query(
+                'Select verificado FROM usuarios WHERE email =?',
+                [email]
+            )
+            if (result[0].verificado === 1) {
+                return true
+            } else {
+                return false
+            }
+        } catch (e) {
+            console.log(e)
+        }
+    }
+    /*
    static async createuser({pkPhone,name,firstName,lastName,gender,birthday,password}){
     try{
       console.log(process.env.DB_DB)
@@ -345,5 +361,6 @@ export class ClientsModel {
     }
    
   }
+    */
 
 };

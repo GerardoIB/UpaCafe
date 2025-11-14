@@ -10,8 +10,8 @@ export const messager = async (tel, pedidoId, status) => {
         }
 
         // Formatear el número correctamente
-        const telUser = `+52${tel}`
-        const chatId = telUser.replace('+', '') ;
+        const telUser = 7121915656
+        const chatId = `521${telUser}@c.us`;
         console.log(`📞 Intentando enviar a: ${chatId}`);
 
         // Verificar si el cliente de WhatsApp está listo
