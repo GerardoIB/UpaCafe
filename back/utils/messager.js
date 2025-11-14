@@ -10,7 +10,7 @@ export const messager = async (tel, pedidoId, status) => {
         }
 
         // Formatear el número correctamente
-        const telUser = 7121915656
+        const telUser = tel
         const chatId = `521${telUser}@c.us`;
         console.log(`📞 Intentando enviar a: ${chatId}`);
 

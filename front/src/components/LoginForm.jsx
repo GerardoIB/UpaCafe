@@ -67,15 +67,33 @@ const Login = ({ onLoginSuccess }) => {
       });
       return;
     }
-    // Aquí puedes hacer la llamada a tu API
-    toast.current.show({
-      severity: "info",
-      summary: "Correo enviado",
-      detail: `Se enviará un enlace a ${resetEmail}`,
-      life: 4000,
+
+    const result = await fetch("http://localhost:3000/api/user/forgotPassword", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ email: resetEmail }),
     });
-    setShowReset(false);
-    setEmail("");
+
+    const dataReset = await result.json();
+
+    if (result.ok) {
+      toast.current.show({
+        severity: "info",
+        summary: "Correo enviado",
+        detail: `Se enviará un enlace a ${resetEmail}`,
+        life: 4000,
+      });
+      setShowReset(false);
+      setResetEmail("");
+    } else {
+      toast.current.show({
+        severity: "error",
+        summary: "Error",
+        detail: `${dataReset.message}`,
+        life: 4000,
+      });
+    }
   };
 
   return (
@@ -83,11 +101,11 @@ const Login = ({ onLoginSuccess }) => {
       <Toast ref={toast} />
 
       <form onSubmit={handleSubmit} className="login-card">
-        <h2>☕ Iniciar Sesión</h2>
+        <h2 className="login-title">☕ Iniciar Sesión</h2>
 
         <div className="p-field">
           <label htmlFor="email">Correo</label>
-          <span className="p-input-icon-left">
+          <span className="p-input-icon-left input-icon-wrapper">
             <i className="pi pi-envelope" />
             <InputText
               id="email"
@@ -101,7 +119,7 @@ const Login = ({ onLoginSuccess }) => {
 
         <div className="p-field">
           <label htmlFor="password">Contraseña</label>
-          <span className="p-input-icon-left">
+          <span className="p-input-icon-left input-icon-wrapper">
             <i className="pi pi-lock" />
             <Password
               id="password"
@@ -124,22 +142,26 @@ const Login = ({ onLoginSuccess }) => {
         />
 
         <div className="extra-links">
-          <Button
-            label="¿Olvidaste tu contraseña?"
-            className="p-button-text p-button-sm"
-            onClick={() => setShowReset(true)}
-          />
-          <a href="/Register" className="register-link">
-            Crear cuenta
-          </a>
-        </div>
+  <button
+    type="button"
+    className="forgot-password-btn"
+    onClick={() => setShowReset(true)}
+  >
+    ¿Olvidaste tu contraseña?
+  </button>
+  <a href="/Register" className="register-link">
+    Crear cuenta
+  </a>
+</div>
+
+
       </form>
 
       {/* 🔹 Modal de recuperación */}
       <Dialog
         header="Recuperar contraseña"
         visible={showReset}
-        style={{ width: "25rem" }}
+        style={{ width: "30rem" }}
         modal
         onHide={() => setShowReset(false)}
       >
@@ -159,6 +181,6 @@ const Login = ({ onLoginSuccess }) => {
       </Dialog>
     </div>
   );
-};
+};  
 
 export default Login;

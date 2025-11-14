@@ -18,6 +18,7 @@ import AgregarProducto from './components/AgregarProducto';
 import GestionInventario from './pages/GestionInventario';
 import UsersTable from './components/UsersTable';
 import './index.css';
+import ResetPassword from './pages/ResetPassword';
 
 function AppContent() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -79,6 +80,7 @@ function AppContent() {
         <Route path="/" element={<Login onLoginSuccess={(user) => { setUser(user); setIsAuthenticated(true); }} />} />
         <Route path="/register" element={<Register />} />
         <Route path="/verificar" element={<VerificarCorreo />} />
+        <Route path='/reset-password' element={ <ResetPassword />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     );
