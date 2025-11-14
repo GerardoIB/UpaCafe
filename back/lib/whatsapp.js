@@ -1,32 +1,33 @@
 import pkg from "whatsapp-web.js";
 const { Client, LocalAuth } = pkg;
 import qrcode from 'qrcode-terminal';
-import { fa } from "zod/locales";
 
-// Configuración para Brave en Fedora
 export const whatsapp = new Client({
+    authStrategy: new LocalAuth(),
     puppeteer: {
         headless: true,
         args: [
             '--no-sandbox',
-            '--disable-setuid-sandbox'
-        ]
-    },
-    authStrategy: new LocalAuth()
+            '--disable-setuid-sandbox',
+            '--disable-dev-shm-usage',
+            '--disable-accelerated-2d-canvas',
+            '--no-first-run',
+            '--no-zygote',
+            '--single-process',
+            '--disable-gpu'
+        ],
+        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium'
+    }
 });
 
-
 whatsapp.on('qr', qr => {
-    qrcode.generate(qr, {
-        small: true
-    });
+    qrcode.generate(qr, { small: true });
 });
 
 whatsapp.on('ready', () => {
     console.log('Client is ready');
 });
 
-// Manejo de errores adicional
 whatsapp.on('auth_failure', (msg) => {
     console.error('Authentication failure', msg);
 });
@@ -34,5 +35,3 @@ whatsapp.on('auth_failure', (msg) => {
 whatsapp.on('disconnected', (reason) => {
     console.log('Client was logged out', reason);
 });
-
-
