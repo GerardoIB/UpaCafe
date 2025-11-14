@@ -1,7 +1,9 @@
 import cors from 'cors'
 const allowedOrigins = [
     'http://localhost:3000',
-    'http://localhost:5174']
+    'http://localhost:5174',
+    'https://upa-cafe.vercel.app/'
+]
 const corsOptions = {
     origin: function (origin, callback) {
         // allow requests with no origin 
