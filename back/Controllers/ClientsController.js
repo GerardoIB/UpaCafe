@@ -86,8 +86,14 @@ export class clientsController {
             return res.status(401).json({ message: 'Invalid token' })
         }
     }
+  
     logout = (req, res) => {
-        res.clearCookie('access_token', { httpOnly: true, secure: false, sameSite: 'lax' });
+        // Limpiar cookie con la MISMA configuración que al crearla
+        res.clearCookie('access_token', {
+            httpOnly: true,
+            secure: true,      // ← Igual que al crear
+            sameSite: 'none'   // ← Igual que al crear
+        });
         res.status(200).json({ message: 'Logout successful' });
     }
     deleteWorker = async (req, res) => {

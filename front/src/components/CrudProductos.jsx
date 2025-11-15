@@ -103,9 +103,9 @@ const CrudProductos = () => {
         if (editMode) {
           // Actualizar producto existente
           const result = await fetch(`https://upacafe.onrender.com/api/orders/updateProduct/${producto.id}`, {
-            method: 'PUT',
+            method: 'PATCH',
+            credentials:"include"
             headers: {
-              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(producto)
