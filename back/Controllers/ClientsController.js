@@ -72,6 +72,7 @@ export class clientsController {
     verifyToken = (req, res) => {
         const token = req.cookies.access_token
         const JWT_SECRET = process.env.JWT_SECRET
+        console.log('es el fetch al protected' + token)
         if (!token) {
             return res.status(401).json({ message: 'No token provided' })
         }
