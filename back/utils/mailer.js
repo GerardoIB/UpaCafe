@@ -1,25 +1,14 @@
 import nodemailer from 'nodemailer';
 import dotenv from 'dotenv';
 import { email } from 'zod';
+import { Resend } from 'resend';
 
 dotenv.config();
-
-const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 587,
-  secure: false,
-  auth: {
-    user: process.env.USER_EMAIL,
-    pass: process.env.APLICATION_PASSWORD
-  },
-  tls: {
-    rejectUnauthorized: false // Solo si es necesario
-  }
-});
+  const resend = new Resend('re_LFvdEsja_Lv5aJjZhp7DbuBqa4GDyXt9c')
 
 export const sendVerificationEmail = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/verificar?token=${token}`;
-  await transporter.sendMail({
+  await resend.emails.send({
     from: '"Cafetería UPA" <no-reply@cafeteria.com>',
     to: email,
     subject: 'Verifica tu correo electrónico',
@@ -33,7 +22,7 @@ export const sendVerificationEmail = async (email, token) => {
 export const sendResetPassword = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/reset-password?token=${token}`;
 
-  await transporter.sendMail({
+  await resend.emails.send({
     from: '"Cafetería UPA" <no-reply@cafeteria.com>',
     to: email,
     subject: 'Restablece tu contraseña',
