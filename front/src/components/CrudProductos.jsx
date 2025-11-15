@@ -15,10 +15,10 @@ const CrudProductos = () => {
   const [ingredientes, setIngredientes] = useState([]);
   const [productoDialog, setProductoDialog] = useState(false);
   const [producto, setProducto] = useState({
-    name: "",
-    price: 0,
+    nombre: "",
+    precio: 0,
     categoria: "",
-    description: "",
+    descripcion: "",
     ingredientes: [],
   });
   const [submitted, setSubmitted] = useState(false);
@@ -26,24 +26,61 @@ const CrudProductos = () => {
   const toast = React.useRef(null);
 
   useEffect(() => {
-    // Simulación: cargar desde API
-    const loadData = async () => {
-      const resProd = await fetch("https://upacafe.onrender.com/api/orders/productos", { credentials: "include" });
-      const resIng = await fetch("https://upacafe.onrender.com/orders/ingredientes", { credentials: "include" });
-      const dataProd = await resProd.json();
-      const dataIng = await resIng.json();
-      setProductos(dataProd);
-      setIngredientes(dataIng);
-    };
     loadData();
   }, []);
 
+  const loadData = async () => {
+    try {
+      // Obtener token de localStorage
+      const token = localStorage.getItem('access_token');
+      
+      const resProd = await fetch("https://upacafe.onrender.com/api/orders/productos", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      const resIng = await fetch("https://upacafe.onrender.com/api/orders/ingredientes", {
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (resProd.ok && resIng.ok) {
+        const dataProd = await resProd.json();
+        const dataIng = await resIng.json();
+        
+        console.log('Productos cargados:', dataProd); // Debug
+        
+        setProductos(dataProd);
+        setIngredientes(dataIng);
+      } else {
+        toast.current?.show({ 
+          severity: "error", 
+          summary: "Error", 
+          detail: "No se pudieron cargar los datos", 
+          life: 3000 
+        });
+      }
+    } catch (error) {
+      console.error('Error cargando datos:', error);
+      toast.current?.show({ 
+        severity: "error", 
+        summary: "Error", 
+        detail: "Error de conexión", 
+        life: 3000 
+      });
+    }
+  };
+
   const openNew = () => {
     setProducto({
-      name: "",
-      price: 0,
+      nombre: "",
+      precio: 0,
       categoria: "",
-      description: "",
+      descripcion: "",
       ingredientes: [],
     });
     setSubmitted(false);
@@ -58,37 +95,70 @@ const CrudProductos = () => {
 
   const saveProducto = async () => {
     setSubmitted(true);
-    if (producto.name.trim()) {
-      let _productos = [...productos];
-      let _producto = { ...producto };
-
-      if (editMode) {
-        const index = _productos.findIndex((p) => p.id === producto.id);
-        _productos[index] = _producto;
-        toast.current.show({ severity: "success", summary: "Actualizado", detail: "Producto actualizado", life: 3000 });
-      } else {
-        const result = await fetch('https://upacafe.onrender.com/api/orders/createProduct',{
-          method:'POST',
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(_producto)
-        })
-        if(result.ok){
-        _producto.id = _productos.length + 1;
-        _productos.push(_producto);
-        console.log(_producto )
-        toast.current.show({ severity: "success", summary: "Creado", detail: "Producto agregado", life: 3000 });
+    
+    if (producto.nombre.trim()) {
+      try {
+        const token = localStorage.getItem('access_token');
+        
+        if (editMode) {
+          // Actualizar producto existente
+          const result = await fetch(`https://upacafe.onrender.com/api/orders/updateProduct/${producto.id}`, {
+            method: 'PUT',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(producto)
+          });
+          
+          if (result.ok) {
+            toast.current.show({ 
+              severity: "success", 
+              summary: "Actualizado", 
+              detail: "Producto actualizado", 
+              life: 3000 
+            });
+            loadData(); // Recargar datos
+          }
+        } else {
+          // Crear nuevo producto
+          const result = await fetch('https://upacafe.onrender.com/api/orders/createProduct', {
+            method: 'POST',
+            headers: {
+              'Authorization': `Bearer ${token}`,
+              'Content-Type': 'application/json'
+            },
+            body: JSON.stringify(producto)
+          });
+          
+          if (result.ok) {
+            toast.current.show({ 
+              severity: "success", 
+              summary: "Creado", 
+              detail: "Producto agregado", 
+              life: 3000 
+            });
+            loadData(); // Recargar datos
+          }
         }
+        
+        setProductoDialog(false);
+        setProducto({
+          nombre: "",
+          precio: 0,
+          categoria: "",
+          descripcion: "",
+          ingredientes: [],
+        });
+      } catch (error) {
+        console.error('Error guardando producto:', error);
+        toast.current.show({ 
+          severity: "error", 
+          summary: "Error", 
+          detail: "No se pudo guardar el producto", 
+          life: 3000 
+        });
       }
-
-      setProductos(_productos);
-      setProductoDialog(false);
-      setProducto({
-        name: "",
-        price: 0,
-        categoria: "",
-        description: "",
-        ingredientes: [],
-      });
     }
   };
 
@@ -99,24 +169,64 @@ const CrudProductos = () => {
   };
 
   const deleteProducto = async (rowData) => {
-    setProductos(productos.filter((p) => p.id !== rowData.id));
-    console.log(rowData)
-
-    const result = await fetch(`https://upacafe.onrender.com/api/orders/delete/${rowData.id}`,{
-        method:'DELETE',
-        credentials:'include'
-    })
-    if(result.ok){
-    toast.current.show({ severity: "warn", summary: "Eliminado", detail: "Producto eliminado", life: 3000 });
+    try {
+      const token = localStorage.getItem('access_token');
+      
+      const result = await fetch(`https://upacafe.onrender.com/api/orders/delete/${rowData.id}`, {
+        method: 'DELETE',
+        headers: {
+          'Authorization': `Bearer ${token}`,
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (result.ok) {
+        setProductos(productos.filter((p) => p.id !== rowData.id));
+        toast.current.show({ 
+          severity: "warn", 
+          summary: "Eliminado", 
+          detail: "Producto eliminado", 
+          life: 3000 
+        });
+      }
+    } catch (error) {
+      console.error('Error eliminando producto:', error);
+      toast.current.show({ 
+        severity: "error", 
+        summary: "Error", 
+        detail: "No se pudo eliminar el producto", 
+        life: 3000 
+      });
     }
   };
 
   const productoDialogFooter = (
     <>
-      <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} className="p-button-text" />
-      <Button label={editMode ? "Actualizar" : "Guardar"} icon="pi pi-check" onClick={saveProducto} autoFocus />
+      <Button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        outlined 
+        onClick={hideDialog} 
+        className="p-button-text" 
+      />
+      <Button 
+        label={editMode ? "Actualizar" : "Guardar"} 
+        icon="pi pi-check" 
+        onClick={saveProducto} 
+        autoFocus 
+      />
     </>
   );
+
+  const priceBodyTemplate = (rowData) => {
+    return `$${parseFloat(rowData.precio).toFixed(2)}`;
+  };
+
+  const disponibleBodyTemplate = (rowData) => {
+    return rowData.disponible ? 
+      <span className="badge badge-success">Disponible</span> : 
+      <span className="badge badge-danger">No disponible</span>;
+  };
 
   return (
     <div className="crud-productos-container">
@@ -126,17 +236,44 @@ const CrudProductos = () => {
         <Button label="Nuevo Producto" icon="pi pi-plus" onClick={openNew} />
       </div>
 
-      <DataTable value={productos} paginator rows={5} responsiveLayout="scroll">
+      <DataTable 
+        value={productos} 
+        paginator 
+        rows={5} 
+        responsiveLayout="scroll"
+        emptyMessage="No hay productos disponibles"
+      >
         <Column field="nombre" header="Nombre" sortable></Column>
-        <Column field="precio" header="Precio ($)" sortable></Column>
+        <Column 
+          field="precio" 
+          header="Precio" 
+          sortable 
+          body={priceBodyTemplate}
+        ></Column>
         <Column field="categoria" header="Categoría"></Column>
         <Column field="descripcion" header="Descripción"></Column>
+        <Column 
+          field="disponible" 
+          header="Estado" 
+          body={disponibleBodyTemplate}
+        ></Column>
         <Column
           header="Acciones"
           body={(rowData) => (
             <div className="acciones">
-              <Button icon="pi pi-pencil" rounded outlined onClick={() => editProducto(rowData)} /> 
-              <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => deleteProducto(rowData)} /> 
+              <Button 
+                icon="pi pi-pencil" 
+                rounded 
+                outlined 
+                onClick={() => editProducto(rowData)} 
+              /> 
+              <Button 
+                icon="pi pi-trash" 
+                rounded 
+                outlined 
+                severity="danger" 
+                onClick={() => deleteProducto(rowData)} 
+              /> 
             </div>
           )}
         />
@@ -151,21 +288,24 @@ const CrudProductos = () => {
         onHide={hideDialog}
       >
         <div className="form-field">
-          <label>Nombre</label>
+          <label>Nombre *</label>
           <InputText
-            value={producto.name}
-            onChange={(e) => setProducto({ ...producto, name: e.target.value })}
+            value={producto.nombre}
+            onChange={(e) => setProducto({ ...producto, nombre: e.target.value })}
             required
             autoFocus
-            className={submitted && !producto.name ? "p-invalid" : ""}
+            className={submitted && !producto.nombre ? "p-invalid" : ""}
           />
+          {submitted && !producto.nombre && (
+            <small className="p-error">El nombre es requerido.</small>
+          )}
         </div>
 
         <div className="form-field">
-          <label>Precio</label>
+          <label>Precio *</label>
           <InputNumber
-            value={producto.price}
-            onValueChange={(e) => setProducto({ ...producto, price: e.value })}
+            value={producto.precio}
+            onValueChange={(e) => setProducto({ ...producto, precio: e.value })}
             mode="currency"
             currency="MXN"
             locale="es-MX"
@@ -189,8 +329,8 @@ const CrudProductos = () => {
         <div className="form-field">
           <label>Descripción</label>
           <InputText
-            value={producto.description}
-            onChange={(e) => setProducto({ ...producto, description: e.target.value })}
+            value={producto.descripcion}
+            onChange={(e) => setProducto({ ...producto, descripcion: e.target.value })}
           />
         </div>
 

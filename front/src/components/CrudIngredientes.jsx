@@ -90,7 +90,7 @@ const CrudIngredientes = () => {
     if (!confirmDelete) return;
 
     try {
-      const result = await fetch(`https://upacafe.onrender.com/orders/ingredientes/${rowData.id}`, {
+      const result = await fetch(`https://upacafe.onrender.com/api/orders/ingredientes/${rowData.id}`, {
         method: "DELETE",
         credentials: "include",
       });
