@@ -62,7 +62,7 @@ const CrudIngredientes = () => {
         toast.current.show({ severity: "success", summary: "Actualizado", detail: "Ingrediente actualizado", life: 3000 });
       } else {
         // POST (crear)
-        const response = await fetch("https://upacafe.onrender.com/api/orders/ingredientes", {
+        const response = await fetch("https://upacafe.onrender.com/api/orders/addIngretes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
