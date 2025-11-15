@@ -18,7 +18,7 @@ const CrudIngredientes = () => {
   useEffect(() => {
     const loadData = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/orders/ingredientes", {
+        const res = await fetch("https://upacafe.onrender.com/api/orders/ingredientes", {
           credentials: "include",
         });
         const data = await res.json();
@@ -50,7 +50,7 @@ const CrudIngredientes = () => {
 
       if (editMode) {
         // PUT (actualizar)
-        const result = await fetch(`http://localhost:3000/api/orders/ingredientes/${_ingrediente.id}`, {
+        const result = await fetch(`https://upacafe.onrender.com/orders/ingredientes/${_ingrediente.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -62,7 +62,7 @@ const CrudIngredientes = () => {
         toast.current.show({ severity: "success", summary: "Actualizado", detail: "Ingrediente actualizado", life: 3000 });
       } else {
         // POST (crear)
-        const response = await fetch("http://localhost:3000/api/orders/ingredientes", {
+        const response = await fetch("https://upacafe.onrender.com/orders/ingredientes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -90,7 +90,7 @@ const CrudIngredientes = () => {
     if (!confirmDelete) return;
 
     try {
-      const result = await fetch(`http://localhost:3000/api/orders/ingredientes/${rowData.id}`, {
+      const result = await fetch(`https://upacafe.onrender.com/orders/ingredientes/${rowData.id}`, {
         method: "DELETE",
         credentials: "include",
       });

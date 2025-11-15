@@ -7,7 +7,7 @@ const WorkerOrders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/orders/allOrders", {
+    fetch("https://upacafe.onrender.com/api/orders/allOrders", {
       method: "GET",
       credentials: "include",
     })
@@ -24,7 +24,7 @@ const WorkerOrders = () => {
 
   const handleStatusChange = async (orderId, nuevoEstado) => {
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/updateOrderStatus/${orderId}`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/orders/updateOrderStatus/${orderId}`, {
         method: "PATCH",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

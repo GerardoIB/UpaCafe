@@ -4,12 +4,9 @@ import Swal from "sweetalert2";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    pkPhone: '',
+    email: '',
     name: '',
-    firstName: '',
-    lastName: '',
-    gender: '',
-    birthday: '',
+    phone: '',
     password: '',
     confirmPassword: ''
   });
@@ -21,7 +18,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validaciones básicas
+    // Validación de contraseñas
     if (formData.password !== formData.confirmPassword) {
       Swal.fire({
         icon: 'error',
@@ -31,48 +28,89 @@ const Register = () => {
       return;
     }
 
-    if (!/^\d+$/.test(formData.pkPhone)) {
+    // Validación de contraseña mínima
+    if (formData.password.length < 6) {
       Swal.fire({
         icon: 'error',
-        title: 'Número inválido',
-        text: 'El número de teléfono debe contener solo dígitos.',
+        title: 'Contraseña muy corta',
+        text: 'La contraseña debe tener al menos 6 caracteres.',
       });
       return;
     }
 
-    // Petición al backend
-    const result = await fetch('http://localhost:3000/api/user/register', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(formData),
-    });
-
-    if (result.ok) {
-      const resultData = await result.json();
-      Swal.fire({
-        icon: 'success',
-        title: 'Registro exitoso',
-        text: `Usuario ${resultData.name} registrado correctamente.`,
-      });
-
-      // Limpia formulario
-      setFormData({
-        pkPhone: '',
-        name: '',
-        firstName: '',
-        lastName: '',
-        gender: '',
-        birthday: '',
-        password: '',
-        confirmPassword: ''
-      });
-    } else {
-      const resultData = await result.json();
+    // Validación de email
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
       Swal.fire({
         icon: 'error',
-        title: 'Error al registrar',
-        text: resultData.message || 'Hubo un error al registrar el usuario.',
+        title: 'Email inválido',
+        text: 'Por favor ingresa un email válido.',
       });
+      return;
+    }
+
+    // Validación de teléfono (7-15 dígitos)
+    const phoneRegex = /^\+?\d{7,15}$/;
+    if (!phoneRegex.test(formData.phone.trim())) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Teléfono inválido',
+        text: 'El teléfono debe tener entre 7 y 15 dígitos.',
+      });
+      return;
+    }
+
+    try {
+      // Preparar datos según tu API (solo email, password, name, phone)
+      const payload = {
+        email: formData.email,
+        password: formData.password,
+        name: formData.name,
+        phone: formData.phone
+      };
+
+      const result = await fetch('https://upacafe.onrender.com/api/user/register', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(payload),
+      });
+
+      const resultData = await result.json();
+
+      if (result.ok) {
+        Swal.fire({
+          icon: 'success',
+          title: 'Registro exitoso',
+          text: `Usuario registrado. Revisa tu correo (${formData.email}) para verificar tu cuenta.`,
+        });
+
+        // Limpia formulario
+        setFormData({
+          email: '',
+          name: '',
+          phone: '',
+          password: '',
+          confirmPassword: ''
+        });
+
+        // Opcional: redirigir al login después de 2 segundos
+        setTimeout(() => {
+          window.location.href = '/Login';
+        }, 2000);
+      } else {
+        Swal.fire({
+          icon: 'error',
+          title: 'Error al registrar',
+          text: resultData.message || 'Hubo un error al registrar el usuario.',
+        });
+      }
+    } catch (error) {
+      Swal.fire({
+        icon: 'error',
+        title: 'Error de conexión',
+        text: 'No se pudo conectar con el servidor. Verifica tu conexión.',
+      });
+      console.error('Error:', error);
     }
   };
 
@@ -82,110 +120,80 @@ const Register = () => {
         <h2 className="register-title">Crear Cuenta</h2>
 
         <div className="form-group">
-          <label htmlFor="pkPhone">Teléfono</label>
+          <label htmlFor="email">Email *</label>
           <input
-            type="text"
-            id="pkPhone"
-            name="pkPhone"
-            value={formData.pkPhone}
+            type="email"
+            id="email"
+            name="email"
+            value={formData.email}
             onChange={handleChange}
+            placeholder="tu@email.com"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="name">Nombre</label>
+          <label htmlFor="name">Nombre Completo *</label>
           <input
             type="text"
             id="name"
             name="name"
             value={formData.name}
             onChange={handleChange}
+            placeholder="Juan Pérez García"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="firstName">Primer Apellido</label>
+          <label htmlFor="phone">Teléfono *</label>
           <input
-            type="text"
-            id="firstName"
-            name="firstName"
-            value={formData.firstName}
+            type="tel"
+            id="phone"
+            name="phone"
+            value={formData.phone}
             onChange={handleChange}
+            placeholder="+52123456789"
             required
           />
+          <small style={{ color: '#666', fontSize: '0.85em' }}>
+            Entre 7 y 15 dígitos (puede incluir +)
+          </small>
         </div>
 
         <div className="form-group">
-          <label htmlFor="lastName">Segundo Apellido</label>
-          <input
-            type="text"
-            id="lastName"
-            name="lastName"
-            value={formData.lastName}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="gender">Género</label>
-          <select
-            id="gender"
-            name="gender"
-            value={formData.gender}
-            onChange={handleChange}
-            required
-          >
-            <option value="">Selecciona tu género</option>
-            <option value="m">Masculino</option>
-            <option value="f">Femenino</option>
-            <option value="other">Otro</option>
-          </select>
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="birthday">Fecha de Nacimiento</label>
-          <input
-            type="date"
-            id="birthday"
-            name="birthday"
-            value={formData.birthday}
-            onChange={handleChange}
-            required
-          />
-        </div>
-
-        <div className="form-group">
-          <label htmlFor="password">Contraseña</label>
+          <label htmlFor="password">Contraseña *</label>
           <input
             type="password"
             id="password"
             name="password"
             value={formData.password}
             onChange={handleChange}
+            placeholder="Mínimo 6 caracteres"
             required
           />
         </div>
 
         <div className="form-group">
-          <label htmlFor="confirmPassword">Confirmar Contraseña</label>
+          <label htmlFor="confirmPassword">Confirmar Contraseña *</label>
           <input
             type="password"
             id="confirmPassword"
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
+            placeholder="Repite tu contraseña"
             required
           />
         </div>
 
-        <button type="submit" className="register-button">Registrarse</button>
+        <button type="submit" className="register-button">
+          Registrarse
+        </button>
 
         <p className="back-login">
           ¿Ya tienes cuenta?{" "}
-          <a className="register-button" href="/Login">
+          <a className="register-link" href="/Login">
             Iniciar sesión
           </a>
         </p>

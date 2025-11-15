@@ -7,7 +7,7 @@ const SelectIngredientes = ({ value, onChange }) => {
   useEffect(() => {
     const fetchIngredientes = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/orders/ingredientes', {
+        const res = await fetch('https://upacafe.onrender.com/api/orders/ingredientes', {
           credentials: 'include',
         });
         const data = await res.json();

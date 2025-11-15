@@ -37,7 +37,7 @@ const AgregarProducto = () => {
     };
 
     try {
-      const res = await fetch('http://localhost:3000/api/orders/createProduct', {
+      const res = await fetch('https://upacafe.onrender.com/api/orders/createProduct', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

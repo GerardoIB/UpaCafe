@@ -13,7 +13,7 @@ const transporter = nodemailer.createTransport({
 });
 
 export const sendVerificationEmail = async (email, token) => {
-  const link = `http://localhost:5173/verificar?token=${token}`;
+  const link = `https://upacafe.onrender.com/verificar?token=${token}`;
   await transporter.sendMail({
     from: '"Cafetería UPA" <no-reply@cafeteria.com>',
     to: email,
@@ -26,7 +26,7 @@ export const sendVerificationEmail = async (email, token) => {
   });
   };
 export const sendResetPassword = async (email, token) => {
-  const link = `http://localhost:5174/reset-password?token=${token}`;
+  const link = `https://upacafe.onrender.com/reset-password?token=${token}`;
 
   await transporter.sendMail({
     from: '"Cafetería UPA" <no-reply@cafeteria.com>',

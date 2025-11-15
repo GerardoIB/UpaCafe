@@ -7,7 +7,7 @@ const AdminOrders = () => {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetch("http://localhost:3000/api/orders/allOrders", {
+    fetch("https://upacafe.onrender.com/api/orders/allOrders", {
       method: "GET",
       credentials: "include",
     })

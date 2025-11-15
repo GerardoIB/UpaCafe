@@ -35,7 +35,7 @@ function AppContent() {
     
     const checkUser = async () => {
       try {
-        const res = await fetch('http://localhost:3000/api/user/protected', {
+        const res = await fetch('https://upacafe.onrender.com/api/user/protected', {
           method: 'GET',
           credentials: 'include'
         });
@@ -61,7 +61,7 @@ function AppContent() {
 
   const handleLogout = async () => {
     try {
-      const res = await fetch('http://localhost:3000/api/user/logout', {
+      const res = await fetch('https://upacafe.onrender.com/api/user/logout', {
         method: 'POST',
         credentials: 'include'
       });

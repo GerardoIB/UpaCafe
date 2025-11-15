@@ -28,8 +28,8 @@ const CrudProductos = () => {
   useEffect(() => {
     // Simulación: cargar desde API
     const loadData = async () => {
-      const resProd = await fetch("http://localhost:3000/api/orders/productos", { credentials: "include" });
-      const resIng = await fetch("http://localhost:3000/api/orders/ingredientes", { credentials: "include" });
+      const resProd = await fetch("https://upacafe.onrender.com/api/orders/productos", { credentials: "include" });
+      const resIng = await fetch("https://upacafe.onrender.com/orders/ingredientes", { credentials: "include" });
       const dataProd = await resProd.json();
       const dataIng = await resIng.json();
       setProductos(dataProd);
@@ -67,7 +67,7 @@ const CrudProductos = () => {
         _productos[index] = _producto;
         toast.current.show({ severity: "success", summary: "Actualizado", detail: "Producto actualizado", life: 3000 });
       } else {
-        const result = await fetch('http://localhost:3000/api/orders/createProduct',{
+        const result = await fetch('https://upacafe.onrender.com/api/orders/createProduct',{
           method:'POST',
           headers: { "Content-Type": "application/json" },
           body: JSON.stringify(_producto)
@@ -102,7 +102,7 @@ const CrudProductos = () => {
     setProductos(productos.filter((p) => p.id !== rowData.id));
     console.log(rowData)
 
-    const result = await fetch(`http://localhost:3000/api/orders/delete/${rowData.id}`,{
+    const result = await fetch(`https://upacafe.onrender.com/api/orders/delete/${rowData.id}`,{
         method:'DELETE',
         credentials:'include'
     })

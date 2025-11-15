@@ -5,7 +5,7 @@ const TicketsList = () => {
   const [tickets, setTickets] = useState([]);
 
   useEffect(() => {
-    fetch('http://localhost:3000/api/orders/tickets/user/',{
+    fetch('https://upacafe.onrender.com/api/orders/tickets/user/',{
        method: 'GET',
           credentials: 'include',
     }) // tu endpoint real

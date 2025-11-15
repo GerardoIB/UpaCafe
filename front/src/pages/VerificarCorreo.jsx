@@ -22,7 +22,7 @@ const VerificarCorreo = () => {
       }
 
       try {
-        const res = await fetch(`http://localhost:3000/api/user/verificar?token=${token}`);
+        const res = await fetch(`https://upacafe.onrender.com/api/user/verificar?token=${token}`);
         const data = await res.json();
 
         if (!res.ok) throw new Error(data.message || 'Error al verificar');

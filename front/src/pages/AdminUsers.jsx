@@ -10,7 +10,7 @@ const AdminUsers = () => {
 
   // 🔹 Cargar usuarios
   useEffect(() => {
-    fetch('http://localhost:3000/api/user/getAdmins', {
+    fetch('https://upacafe.onrender.com/api/user/getAdmins', {
       method: 'GET',
       credentials: 'include',
     })
@@ -55,7 +55,7 @@ const AdminUsers = () => {
     if (Object.keys(validationErrors).length > 0) return; // 🚫 No enviar si hay errores
 
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${selectedUser.id}`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/users/${selectedUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
@@ -77,7 +77,7 @@ const AdminUsers = () => {
   const handleDelete = async (id) => {
     if (!window.confirm('¿Seguro que deseas eliminar este usuario?')) return;
     try {
-      const res = await fetch(`http://localhost:3000/api/users/${id}`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/users/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });

@@ -15,7 +15,7 @@ const CrearPedido = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/orders/productos", { credentials: "include" });
+        const res = await fetch("https://upacafe.onrender.com/api/orders/productos", { credentials: "include" });
         const data = await res.json();
         setMenu(data);
       } catch (err) {
@@ -32,7 +32,7 @@ const CrearPedido = () => {
   useEffect(() => {
     const checkUser = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/user/protected", {
+        const res = await fetch("https://upacafe.onrender.com/api/user/protected", {
           method: "GET",
           credentials: "include",
         });
@@ -62,7 +62,7 @@ const CrearPedido = () => {
     if (value) {
       try {
         // 🔥 Obtener ingredientes específicos del producto
-        const res = await fetch(`http://localhost:3000/api/orders/productos/${value}/ingredientes`, {
+        const res = await fetch(`https://upacafe.onrender.com/api/orders/productos/${value}/ingredientes`, {
           credentials: "include",
         });
         const data = await res.json();
@@ -154,7 +154,7 @@ const CrearPedido = () => {
 
     if (result.isConfirmed) {
       try {
-        const res = await fetch("http://localhost:3000/api/orders/createPedido", {
+        const res = await fetch("https://upacafe.onrender.com/api/orders/createPedido", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
           credentials: "include",

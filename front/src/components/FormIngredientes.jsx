@@ -10,7 +10,7 @@ const FormIngrediente = () => {
     e.preventDefault();
 
     try {
-      const res = await fetch('http://localhost:3000/api/orders/addIngretes', {
+      const res = await fetch('https://upacafe.onrender.com/api/orders/addIngretes', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',

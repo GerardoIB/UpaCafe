@@ -22,7 +22,7 @@ const MisPedidos = ({ user }) => {
   useEffect(() => {
     const fetchPedidos = async () => {
       try {
-        const res = await fetch(`http://localhost:3000/api/user/orders/${user}`, {
+        const res = await fetch(`https://upacafe.onrender.com/api/user/orders/${user}`, {
           method: 'GET',
           credentials: 'include',
         });
@@ -54,7 +54,7 @@ const MisPedidos = ({ user }) => {
     }
 
     try {
-      const res = await fetch(`http://localhost:3000/api/user/${pedidoId}/detalle`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/user/${pedidoId}/detalle`, {
         credentials: 'include',
       });
       if (!res.ok) throw new Error('Error al obtener el detalle del pedido');
@@ -96,7 +96,7 @@ const MisPedidos = ({ user }) => {
     const loadingToast = toast.loading('Cancelando pedido...', toastConfig);
 
     try {
-      const res = await fetch(`http://localhost:3000/api/orders/updateOrderStatus/${pedidoId}`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/orders/updateOrderStatus/${pedidoId}`, {
         method: 'PATCH',
         credentials: 'include',
         headers: { 'Content-Type': 'application/json' },

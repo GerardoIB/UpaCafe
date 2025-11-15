@@ -5,7 +5,7 @@ import NotificationBell from "./NotificationBell";
 import { FaUserCircle, FaBars } from "react-icons/fa";
 import "./Header.css";
 
-const socket = io("http://localhost:3000", { withCredentials: true });
+const socket = io("https://upacafe.onrender.com/", { withCredentials: true });
 
 const Header = ({ user, onLogout, sidebarCollapsed, onToggleSidebar }) => {
   const [notifications, setNotifications] = useState([]);

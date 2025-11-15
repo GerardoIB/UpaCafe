@@ -55,7 +55,7 @@ const CardProducto = ({ producto, user }) => {
 
     try {
       setLoading(true);
-      const res = await fetch("http://localhost:3000/api/orders/createPedido", {
+      const res = await fetch("http://https://upacafe.onrender.com/api/orders/createPedido", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",

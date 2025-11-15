@@ -9,7 +9,7 @@ const Home = () => {
   useEffect(() => {
     const fetchProductos = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/orders/productos", { credentials: "include" });
+        const res = await fetch("https://upacafe.onrender.com/api/orders/productos", { credentials: "include" });
         const data = await res.json();
         setProductos(data);
       } catch (err) {
@@ -19,7 +19,7 @@ const Home = () => {
 
     const checkUser = async () => {
       try {
-        const res = await fetch("http://localhost:3000/api/user/protected", { credentials: "include" });
+        const res = await fetch("https://upacafe.onrender.com/api/user/protected", { credentials: "include" });
         if (!res.ok) return;
         const data = await res.json();
         setUser(data.user || data);

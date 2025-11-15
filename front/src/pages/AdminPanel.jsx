@@ -14,7 +14,7 @@ const DashboardHome = () => {
   });
 
  useEffect(() => {
-  fetch('http://localhost:3000/api/user/getStats', { credentials: 'include' })
+  fetch('https://upacafe.onrender.com/api/user/getStats', { credentials: 'include' })
     .then(async res => {
       const text = await res.text();
       try {

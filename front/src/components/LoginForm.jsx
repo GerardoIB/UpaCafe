@@ -19,7 +19,7 @@ const Login = ({ onLoginSuccess }) => {
     setLoading(true);
 
     try {
-      const result = await fetch("http://localhost:3000/api/user/login", {
+      const result = await fetch("https://upacafe.onrender.com/api/user/login", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
@@ -29,7 +29,7 @@ const Login = ({ onLoginSuccess }) => {
       if (!result.ok) throw new Error("Error en autenticación");
 
       const data = await result.json();
-      const res = await fetch("http://localhost:3000/api/user/protected", {
+      const res = await fetch("https://upacafe.onrender.com/api/user/protected", {
         method: "GET",
         credentials: "include",
       });
@@ -68,7 +68,7 @@ const Login = ({ onLoginSuccess }) => {
       return;
     }
 
-    const result = await fetch("http://localhost:3000/api/user/forgotPassword", {
+    const result = await fetch("https://upacafe.onrender.com/api/user/forgotPassword", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       credentials: "include",
@@ -142,17 +142,17 @@ const Login = ({ onLoginSuccess }) => {
         />
 
         <div className="extra-links">
-  <button
-    type="button"
-    className="forgot-password-btn"
-    onClick={() => setShowReset(true)}
-  >
-    ¿Olvidaste tu contraseña?
-  </button>
-  <a href="/Register" className="register-link">
-    Crear cuenta
-  </a>
-</div>
+          <button
+            type="button"
+            className="forgot-password-btn"
+            onClick={() => setShowReset(true)}
+          >
+            ¿Olvidaste tu contraseña?
+          </button>
+          <a href="/Register" className="register-link">
+            Crear cuenta
+          </a>
+        </div>
 
 
       </form>
@@ -181,6 +181,6 @@ const Login = ({ onLoginSuccess }) => {
       </Dialog>
     </div>
   );
-};  
+};
 
 export default Login;
