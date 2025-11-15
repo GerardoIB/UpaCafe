@@ -30,7 +30,12 @@ export class clientsController {
                 const JWT_SECRET = process.env.JWT_SECRET;
                 const token = jwt.sign({ id: newUser.id, email: newUser.email, nombre: name, rol_id: rol, phone: phone }, JWT_SECRET, { expiresIn: '2h' });
                 console.log('Generated Token:', token);
-                res.cookie('access_token', token, { httpOnly: true, secure: false, sameSite: 'lax' });
+                res.cookie('access_token', token, {
+                    httpOnly: true,
+                    secure: true,  // ← DEBE ser true en HTTPS
+                    sameSite: 'none',  // ← Permite cross-origin
+                    maxAge: 2 * 60 * 60 * 1000  // 2 horas
+                });
                 await sendVerificationEmail(email, newUser.token);
                 res.status(201).json({ message: 'User created successfully', userId: newUser.id, verificationToken: newUser.token });
             }
@@ -50,7 +55,12 @@ export class clientsController {
             const JWT_SECRET = process.env.JWT_SECRET;
             const token = jwt.sign(user, JWT_SECRET, { expiresIn: '2h', })
             console.log('Generated Token:', token);
-            res.cookie('access_token', token, { httpOnly: true, secure: false, sameSite: 'lax' });
+            res.cookie('access_token', token, {
+                httpOnly: true,
+                secure: true,  // ← DEBE ser true en HTTPS
+                sameSite: 'none',  // ← Permite cross-origin
+                maxAge: 2 * 60 * 60 * 1000  // 2 horas
+            });
             res.status(200).json({ message: 'Login successful', token });
 
 
@@ -173,7 +183,7 @@ export class clientsController {
             console.log(newUser)
 
             await sendVerificationEmail(email, newUser.token);
-            res.cookie('access_token', token, { httpOnly: true, secure: false, sameSite: 'lax' })
+            res.cookie('access_token', token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 2 * 60 * 60 * 1000 })
 
             res.status(201).json({ message: 'Admin created successfully', userId: newUser.id });
 
@@ -308,7 +318,7 @@ export class clientsController {
             );
 
             // Opcional: guardar token en BD si lo deseas
-           
+
 
             // Enviar correo
             await sendResetPassword(email, token);
@@ -321,30 +331,30 @@ export class clientsController {
         }
     };
     resetPassword = async (req, res) => {
-  try {
-    const { token, newPassword } = req.body;
+        try {
+            const { token, newPassword } = req.body;
 
-    if (!token || !newPassword) {
-      return res.status(400).json({ message: 'Token and new password are required' });
-    }
+            if (!token || !newPassword) {
+                return res.status(400).json({ message: 'Token and new password are required' });
+            }
 
-    const JWT_SECRET = process.env.JWT_SECRET;
+            const JWT_SECRET = process.env.JWT_SECRET;
 
-    // Verificar token
-    const decoded = jwt.verify(token, JWT_SECRET);
-    console.log(decoded)
+            // Verificar token
+            const decoded = jwt.verify(token, JWT_SECRET);
+            console.log(decoded)
 
-    // Cambiar contraseña en la BD
-    const result =  await this.ClientsModel.updatePassword(decoded.email, newPassword);
-    console.log(result)
+            // Cambiar contraseña en la BD
+            const result = await this.ClientsModel.updatePassword(decoded.email, newPassword);
+            console.log(result)
 
-    return res.status(200).json({ message: 'Password updated successfully' });
+            return res.status(200).json({ message: 'Password updated successfully' });
 
-  } catch (error) {
-    console.error(error);
-    return res.status(400).json({ message: 'Invalid or expired token' });
-  }
-};
+        } catch (error) {
+            console.error(error);
+            return res.status(400).json({ message: 'Invalid or expired token' });
+        }
+    };
 
     /*
   create = async (req,res) => {
