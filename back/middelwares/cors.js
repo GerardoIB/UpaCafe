@@ -1,15 +1,30 @@
 import cors from 'cors';
 
-// TEMPORAL: Acepta todos los orígenes
-app.use(cors({
-    origin: true,  // Acepta cualquier origin
-    credentials: true
-}));
+const allowedOrigins = [
+    'http://localhost:3000',
+    'http://localhost:5174',
+    'https://upa-cafe.vercel.app'  // SIN barra al final
+];
 
-// Socket.io
-const io = new Server(server, {
-    cors: {
-        origin: true,  // Acepta cualquier origin
-        credentials: true
-    }
-});
+const corsOptions = {
+    origin: function (origin, callback) {
+        // Permitir requests sin origin (como mobile apps, curl, Postman)
+        if (!origin) {
+            return callback(null, true);
+        }
+        
+        // Verificar si el origin está en la lista permitida
+        if (allowedOrigins.includes(origin)) {
+            return callback(null, true);
+        }
+        
+        // Rechazar otros origins
+        const msg = `The CORS policy for this site does not allow access from the specified Origin: ${origin}`;
+        return callback(new Error(msg), false);
+    },
+    credentials: true,
+    methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+    allowedHeaders: ['Content-Type', 'Authorization']
+};
+
+export const corsMiddleware = cors(corsOptions);
