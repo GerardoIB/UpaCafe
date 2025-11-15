@@ -5,7 +5,8 @@ import { email } from 'zod';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp-relay.brevo.com',
+  port:'587',
   auth: {
     user: process.env.USER_EMAIL,
     pass: process.env.APLICATIONPASSWORD
