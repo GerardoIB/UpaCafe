@@ -19,7 +19,7 @@ export const sendVerificationEmail = async (email, token) => {
       <a href="${link}">${link}</a>
     `
   });
-  console.log('coreeo enviado : ' + data)
+  console.log('coreeo enviado : ' + data.data)
   };
 export const sendResetPassword = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/reset-password?token=${token}`;
