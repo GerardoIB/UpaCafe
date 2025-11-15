@@ -3,12 +3,13 @@ import dotenv from 'dotenv';
 import { email } from 'zod';
 import { Resend } from 'resend';
 
+
 dotenv.config();
   const resend = new Resend('re_LFvdEsja_Lv5aJjZhp7DbuBqa4GDyXt9c')
 
 export const sendVerificationEmail = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/verificar?token=${token}`;
-  await resend.emails.send({
+  const data = await resend.emails.send({
     from: '"Cafetería UPA" <no-reply@cafeteria.com>',
     to: email,
     subject: 'Verifica tu correo electrónico',
@@ -18,11 +19,12 @@ export const sendVerificationEmail = async (email, token) => {
       <a href="${link}">${link}</a>
     `
   });
+  console.log('coreeo enviado : ' + data)
   };
 export const sendResetPassword = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/reset-password?token=${token}`;
 
-  await resend.emails.send({
+  const data = await resend.emails.send({
     from: '"Cafetería UPA" <no-reply@cafeteria.com>',
     to: email,
     subject: 'Restablece tu contraseña',
@@ -34,5 +36,6 @@ export const sendResetPassword = async (email, token) => {
       <p>Si no solicitaste este cambio, puedes ignorar este correo.</p>
     `
   });
+  console.log('correo enviado : ' + data)
 };
 
