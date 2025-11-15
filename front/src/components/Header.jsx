@@ -12,7 +12,7 @@ const Header = ({ user, onLogout, sidebarCollapsed, onToggleSidebar }) => {
 
   useEffect(() => {
     // Cargar notificaciones iniciales
-    fetch(`http://localhost:3000/api/user/notificaciones/${user.id}`, {
+    fetch(`https://upacafe.onrender.com/api/user/notificaciones/${user.id}`, {
       credentials: "include"
     })
       .then(res => res.json())
