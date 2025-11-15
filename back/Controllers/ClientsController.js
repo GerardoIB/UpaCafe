@@ -5,9 +5,6 @@ import { messager } from "../utils/messager.js";
 
 dotenv.config();
 
-
-
-
 export class clientsController {
     constructor({ ClientsModel, io }) {
         this.ClientsModel = ClientsModel
@@ -18,84 +15,138 @@ export class clientsController {
         try {
             const { email, password, name, phone } = req.body;
             console.log(req.body);
+            
             if (!email || !password || !name || !phone) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
-            const rol = 3
-            const emailValidated = await this.ClientsModel.validateEmail(email)
+            
+            const rol = 3;
+            const emailValidated = await this.ClientsModel.validateEmail(email);
+            
             if (emailValidated) {
-                res.status(403).json({ message: 'This email have been registred' })
-            } else {
-                const newUser = await this.ClientsModel.createUser({ email, password, name, rol, phone });
-                const JWT_SECRET = process.env.JWT_SECRET;
-                const token = jwt.sign({ id: newUser.id, email: newUser.email, nombre: name, rol_id: rol, phone: phone }, JWT_SECRET, { expiresIn: '2h' });
-                console.log('Generated Token:', token);
-                res.cookie('access_token', token, {
-                    httpOnly: true,
-                    secure: true,  // ← DEBE ser true en HTTPS
-                    sameSite: 'none',  // ← Permite cross-origin
-                    maxAge: 2 * 60 * 60 * 1000  // 2 horas
-                });
-                await sendVerificationEmail(email, newUser.token);
-                res.status(201).json({ message: 'User created successfully', userId: newUser.id, verificationToken: newUser.token });
+                return res.status(403).json({ message: 'This email has been registered' });
             }
+            
+            const newUser = await this.ClientsModel.createUser({ email, password, name, rol, phone });
+            const JWT_SECRET = process.env.JWT_SECRET;
+            const token = jwt.sign(
+                { id: newUser.id, email: newUser.email, nombre: name, rol_id: rol, phone: phone },
+                JWT_SECRET,
+                { expiresIn: '2h' }
+            );
+            
+            console.log('Generated Token:', token);
+            
+            // 1️⃣ Enviar cookie (para desktop)
+            res.cookie('access_token', token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: 2 * 60 * 60 * 1000
+            });
+            
+            await sendVerificationEmail(email, newUser.token);
+            
+            // 2️⃣ TAMBIÉN enviar en JSON (para móvil)
+            return res.status(201).json({
+                message: 'User created successfully',
+                token: token,
+                userId: newUser.id,
+                user: {
+                    id: newUser.id,
+                    email: newUser.email,
+                    nombre: name,
+                    rol_id: rol,
+                    phone: phone
+                }
+            });
+            
         } catch (error) {
             res.status(500).json({ message: error.message });
             console.error(error);
         }
     }
+
     login = async (req, res) => {
         console.log(req.body);
         try {
             const { email, password } = req.body;
+            
             if (!email || !password) {
                 return res.status(400).json({ message: 'Email and password are required' });
             }
+            
             const user = await this.ClientsModel.login({ email, password });
             const JWT_SECRET = process.env.JWT_SECRET;
-            const token = jwt.sign(user, JWT_SECRET, { expiresIn: '2h', })
+            const token = jwt.sign(user, JWT_SECRET, { expiresIn: '2h' });
+            
             console.log('Generated Token:', token);
+            
+            // 1️⃣ Enviar cookie (para desktop)
             res.cookie('access_token', token, {
                 httpOnly: true,
-                secure: true,  // ← DEBE ser true en HTTPS
-                sameSite: 'none',  // ← Permite cross-origin
-                maxAge: 2 * 60 * 60 * 1000  // 2 horas
+                secure: true,
+                sameSite: 'none',
+                maxAge: 2 * 60 * 60 * 1000
             });
-            res.status(200).json({ message: 'Login successful', token });
-
-
+            
+            // 2️⃣ TAMBIÉN enviar en JSON (para móvil)
+            return res.status(200).json({
+                message: 'Login successful',
+                token: token,
+                user: {
+                    id: user.id,
+                    email: user.email,
+                    nombre: user.nombre,
+                    rol_id: user.rol_id,
+                    phone: user.phone
+                }
+            });
+            
         } catch (error) {
             res.status(403).json({ message: error.message });
             console.error(error);
         }
     }
+
     verifyToken = (req, res) => {
-        const token = req.cookies.access_token
-        const JWT_SECRET = process.env.JWT_SECRET
-        console.log('es el fetch al protected' + token)
+        // 1️⃣ Primero intenta leer de cookie (desktop)
+        let token = req.cookies.access_token;
+        
+        // 2️⃣ Si no hay cookie, lee de Authorization header (móvil)
         if (!token) {
-            return res.status(401).json({ message: 'No token provided' })
+            const authHeader = req.headers['authorization'];
+            token = authHeader && authHeader.split(' ')[1];
         }
+        
+        const JWT_SECRET = process.env.JWT_SECRET;
+        console.log('Token verificado desde:', req.cookies.access_token ? 'Cookie' : 'Header');
+        
+        if (!token) {
+            return res.status(401).json({ message: 'No token provided' });
+        }
+        
         try {
-            const decoded = jwt.verify(token, JWT_SECRET)
-
-            req.user = decoded
-
-            res.json({ user: decoded })
+            const decoded = jwt.verify(token, JWT_SECRET);
+            req.user = decoded;
+            res.json({ user: decoded });
         } catch (err) {
-            return res.status(401).json({ message: 'Invalid token' })
+            return res.status(401).json({ message: 'Invalid token' });
         }
     }
-  
+
     logout = (req, res) => {
-        // Limpiar cookie con la MISMA configuración que al crearla
+        // Limpiar cookie (desktop)
         res.clearCookie('access_token', {
             httpOnly: true,
-            secure: true,      // ← Igual que al crear
-            sameSite: 'none'   // ← Igual que al crear
+            secure: true,
+            sameSite: 'none'
         });
+        
+        // Frontend limpiará localStorage (móvil)
         res.status(200).json({ message: 'Logout successful' });
     }
+
     deleteWorker = async (req, res) => {
         try {
             const userId = req.params.id;
@@ -109,6 +160,7 @@ export class clientsController {
             console.error(error);
         }
     }
+
     deleteAdmin = async (req, res) => {
         try {
             const userId = req.params.id;
@@ -122,6 +174,7 @@ export class clientsController {
             console.error(error);
         }
     }
+
     removeAcount = async (req, res) => {
         try {
             const userId = req.params.id;
@@ -135,6 +188,7 @@ export class clientsController {
             console.error(error);
         }
     }
+
     orders = async (req, res) => {
         try {
             const userId = req.params.id;
@@ -145,13 +199,13 @@ export class clientsController {
             console.error(error);
         }
     }
+
     details = async (req, res) => {
         try {
             const orderId = req.params.id;
             const details = await this.ClientsModel.detalle(orderId);
             console.log(details);
             res.status(200).json(details);
-
         } catch (error) {
             res.status(500).json({ message: error.message });
             console.error(error);
@@ -160,71 +214,91 @@ export class clientsController {
 
     validar = async (req, res) => {
         try {
-
             const { token } = req.query;
-
 
             if (!token) {
                 return res.status(400).json({ message: 'Verification token is required' });
             }
-            const user = await this.ClientsModel.acountVerification(token)
-            console.log(token)
+            
+            const user = await this.ClientsModel.acountVerification(token);
+            console.log(token);
             res.status(200).json({ message: 'Account verified successfully' });
         } catch (error) {
             res.status(500).json({ message: error.message });
             console.error(error);
         }
     }
+
     createAdmin = async (req, res) => {
         try {
-
-            const { email, password, name, phone } = req.body
+            const { email, password, name, phone } = req.body;
+            
             if (!email || !password || !name || !phone) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
-            const rol = 1
+            
+            const rol = 1;
             const newUser = await this.ClientsModel.createAdmin({ email, password, name, rol, phone });
             console.log(newUser);
+            
             const JWT_SECRET = process.env.JWT_SECRET;
-            const token = jwt.sign({ id: newUser.id, email: email, nombre: name, rol_id: rol, phone: phone }, JWT_SECRET, { expiresIn: '2h' });
-            console.log(newUser)
-
+            const token = jwt.sign(
+                { id: newUser.id, email: email, nombre: name, rol_id: rol, phone: phone },
+                JWT_SECRET,
+                { expiresIn: '2h' }
+            );
+            
             await sendVerificationEmail(email, newUser.token);
-            res.cookie('access_token', token, { httpOnly: true, secure: true, sameSite: 'none', maxAge: 2 * 60 * 60 * 1000 })
+            
+            res.cookie('access_token', token, {
+                httpOnly: true,
+                secure: true,
+                sameSite: 'none',
+                maxAge: 2 * 60 * 60 * 1000
+            });
 
-            res.status(201).json({ message: 'Admin created successfully', userId: newUser.id });
-
-        } catch (rror) {
-            res.status(500).json({ message: rror.message });
-            console.error(rror);
-
-        }
-    }
-    createWorker = async (req, res) => {
-        try {
-            const { email, password, name, phone } = req.body;
-            if (!email || !password || !name || !phone) {
-                return res.status(400).json({ message: 'All fields are required' });
-            }
-            const rol = 2
-            const validateEmail = await this.ClientsModel.validateEmail(email)
-            if (validateEmail) {
-
-                res.status(400).json({ message: 'This email have been regitred' })
-
-            } else {
-                const newUser = await this.ClientsModel.createWorker({ email, password, name, rol, phone });
-
-                await sendVerificationEmail(email, newUser.token);
-                res.status(201).json({ message: 'Worker created successfully', userId: newUser.id, verificationToken: newUser.token });
-
-            }
+            return res.status(201).json({
+                message: 'Admin created successfully',
+                token: token,
+                userId: newUser.id
+            });
 
         } catch (error) {
-            res.status(500).json({ message: 'Ocurrio un error inesperado' });
+            res.status(500).json({ message: error.message });
             console.error(error);
         }
     }
+
+    createWorker = async (req, res) => {
+        try {
+            const { email, password, name, phone } = req.body;
+            
+            if (!email || !password || !name || !phone) {
+                return res.status(400).json({ message: 'All fields are required' });
+            }
+            
+            const rol = 2;
+            const validateEmail = await this.ClientsModel.validateEmail(email);
+            
+            if (validateEmail) {
+                return res.status(400).json({ message: 'This email has been registered' });
+            }
+            
+            const newUser = await this.ClientsModel.createWorker({ email, password, name, rol, phone });
+            await sendVerificationEmail(email, newUser.token);
+            
+            return res.status(201).json({
+                message: 'Worker created successfully',
+                userId: newUser.id,
+                verificationToken: newUser.token
+            });
+
+        } catch (error) {
+            res.status(500).json({ message: 'Unexpected error occurred' });
+            console.error(error);
+        }
+    }
+
     getWorkers = async (req, res) => {
         try {
             const workers = await this.ClientsModel.getAllWorkers();
@@ -234,6 +308,7 @@ export class clientsController {
             console.error(error);
         }
     }
+
     getAdmins = async (req, res) => {
         try {
             const admins = await this.ClientsModel.getAllAdmins();
@@ -243,6 +318,7 @@ export class clientsController {
             console.error(error);
         }
     }
+
     getStats = async (req, res) => {
         try {
             const data = await this.ClientsModel.getStats();
@@ -252,6 +328,7 @@ export class clientsController {
             res.status(500).json({ message: 'Error al obtener estadísticas' });
         }
     }
+
     allUsers = async (req, res) => {
         try {
             const users = await this.ClientsModel.getAllUsers();
@@ -261,49 +338,53 @@ export class clientsController {
             console.error(error);
         }
     }
+
     getNot = async (req, res) => {
-        const { id } = req.params
+        const { id } = req.params;
         try {
-            const notificaciones = await this.ClientsModel.getNotificationsById(id)
-            console.log(notificaciones)
-            res.status(200).json(notificaciones)
-        }
-        catch (e) {
-            res.status(500).json({ message: 'algo ha salido mal' })
-            console.log(e)
-        }
-    }
-    updateStatusNot = async (req, res) => {
-        const { id } = req.params
-        try {
-            const [result] = await this.ClientsModel.updateStatusNot(id)
-            res.status(200).json({ message: 'han sido leidas' })
+            const notificaciones = await this.ClientsModel.getNotificationsById(id);
+            console.log(notificaciones);
+            res.status(200).json(notificaciones);
         } catch (e) {
-            res.status(500).json({ message: 'Algo ha salido mal' })
-            console.log(e)
+            res.status(500).json({ message: 'algo ha salido mal' });
+            console.log(e);
         }
     }
+
+    updateStatusNot = async (req, res) => {
+        const { id } = req.params;
+        try {
+            const [result] = await this.ClientsModel.updateStatusNot(id);
+            res.status(200).json({ message: 'han sido leidas' });
+        } catch (e) {
+            res.status(500).json({ message: 'Algo ha salido mal' });
+            console.log(e);
+        }
+    }
+
     updatePassword = async (req, res) => {
-        const { email, password } = req.body
-        const isVerificate = this.ClientsModel.isVerificate(email)
+        const { email, password } = req.body;
+        const isVerificate = await this.ClientsModel.isVerificate(email);
+        
         if (isVerificate) {
             try {
-                console.log(email, password)
-                const result = await this.ClientsModel.updatePassword(email, password)
-                console.log(result)
-                res.status(200).json({ message: 'ha sido actualizada' })
+                console.log(email, password);
+                const result = await this.ClientsModel.updatePassword(email, password);
+                console.log(result);
+                res.status(200).json({ message: 'ha sido actualizada' });
             } catch (e) {
-                res.status(500).json({ message: 'Algo ha salido mal' })
-                console.log(e)
+                res.status(500).json({ message: 'Algo ha salido mal' });
+                console.log(e);
             }
         } else {
-            res.status(401).json({ message: "Debes estar verificado" })
+            res.status(401).json({ message: "Debes estar verificado" });
         }
     }
+
     forgotPassword = async (req, res) => {
         try {
             const { email } = req.body;
-            console.log(req.body)
+            console.log(req.body);
 
             if (!email) {
                 return res.status(400).json({ message: 'Email is required' });
@@ -316,20 +397,13 @@ export class clientsController {
             }
 
             const JWT_SECRET = process.env.JWT_SECRET;
-
-            // Generar token temporal de 15 minutos
             const token = jwt.sign(
                 { id: user.id, email },
                 JWT_SECRET,
                 { expiresIn: '15m' }
             );
 
-            // Opcional: guardar token en BD si lo deseas
-
-
-            // Enviar correo
             await sendResetPassword(email, token);
-
             return res.status(200).json({ message: 'Reset link sent to your email' });
 
         } catch (error) {
@@ -337,6 +411,7 @@ export class clientsController {
             res.status(500).json({ message: 'Unexpected error sending reset email' });
         }
     };
+
     resetPassword = async (req, res) => {
         try {
             const { token, newPassword } = req.body;
@@ -346,14 +421,11 @@ export class clientsController {
             }
 
             const JWT_SECRET = process.env.JWT_SECRET;
-
-            // Verificar token
             const decoded = jwt.verify(token, JWT_SECRET);
-            console.log(decoded)
+            console.log(decoded);
 
-            // Cambiar contraseña en la BD
             const result = await this.ClientsModel.updatePassword(decoded.email, newPassword);
-            console.log(result)
+            console.log(result);
 
             return res.status(200).json({ message: 'Password updated successfully' });
 
@@ -362,74 +434,4 @@ export class clientsController {
             return res.status(400).json({ message: 'Invalid or expired token' });
         }
     };
-
-    /*
-  create = async (req,res) => {
- try {
-   const { pkPhone, name, firstName, lastName, gender, birthday, password } = req.body;
-
-   // Required fields check
-   if (!pkPhone || !name || !firstName || !lastName || !gender || !birthday || !password) {
-     return res.status(400).json({ message: 'All fields are required: pkPhone, name, firstName, lastName, gender, birthday, password' });
-   }
-
-   // Basic types and formats
-   const phoneStr = String(pkPhone).trim();
-   if (!/^\+?\d{7,15}$/.test(phoneStr)) {
-     return res.status(400).json({ message: 'pkPhone must be a phone number with 7-15 digits, optional leading +' });
-   }
-
-   if (typeof name !== 'string' || name.trim().length === 0 ||
-       typeof firstName !== 'string' || firstName.trim().length === 0 ||
-       typeof lastName !== 'string' || lastName.trim().length === 0) {
-     return res.status(400).json({ message: 'name, firstName and lastName must be non-empty strings' });
-   }
-
-   const allowedGenders = ['male','female','other','m','f','o','Male','Female','Other'];
-   if (!allowedGenders.includes(String(gender))) {
-     return res.status(400).json({ message: `gender must be one of: ${allowedGenders.join(', ')}` });
-   }
-
-   // Validate birthday (ISO yyyy-mm-dd or any parsable date)
-   const parsedDate = Date.parse(birthday);
-   if (Number.isNaN(parsedDate)) {
-     return res.status(400).json({ message: 'birthday must be a valid date (e.g. YYYY-MM-DD)' });
-   }
-
-   if (typeof password !== 'string' || password.length < 6) {
-     return res.status(400).json({ message: 'password must be at least 6 characters long' });
-   }
-
-   // Create user via model
-   const payload = {
-     pkPhone: phoneStr,
-     name: name.trim(),
-     firstName: firstName.trim(),
-     lastName: lastName.trim(),
-     gender: String(gender).trim(),
-     birthday: new Date(parsedDate).toISOString().split('T')[0],
-     password
-   };
-
-   const result = await this.ClientsModel.createuser(payload);
-
-   // If model returns result with insertId or similar
-   if (result && result.insertId) {
-     return res.status(201).json({ message: 'User created', id: result.insertId });
-   }
-
-   // Otherwise return generic success
-   return res.status(201).json({ message: 'User created', result });
-
- } catch (err) {
-   // handle duplicate entry from DB
-   if (err && err.code === 'ER_DUP_ENTRY') {
-     return res.status(409).json({ message: 'Duplicate entry (phone or user already exists)' });
-   }
-   console.error(err);
-   return res.status(500).json({ message: 'Unexpected error creating user' });
- }
-}
- */
-
 }

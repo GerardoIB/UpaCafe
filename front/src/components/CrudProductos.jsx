@@ -31,28 +31,28 @@ const CrudProductos = () => {
 
   const loadData = async () => {
     try {
-      // Obtener token de localStorage
       const token = localStorage.getItem('access_token');
       
+      const headers = { 'Content-Type': 'application/json' };
+      if (token) {
+        headers['Authorization'] = `Bearer ${token}`;
+      }
+      
       const resProd = await fetch("https://upacafe.onrender.com/api/orders/productos", {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        credentials: "include",
+        headers: headers
       });
       
       const resIng = await fetch("https://upacafe.onrender.com/api/orders/ingredientes", {
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
+        credentials: "include",
+        headers: headers
       });
       
       if (resProd.ok && resIng.ok) {
         const dataProd = await resProd.json();
         const dataIng = await resIng.json();
         
-        console.log('Productos cargados:', dataProd); // Debug
+        console.log('Productos cargados:', dataProd);
         
         setProductos(dataProd);
         setIngredientes(dataIng);
@@ -103,9 +103,9 @@ const CrudProductos = () => {
         if (editMode) {
           // Actualizar producto existente
           const result = await fetch(`https://upacafe.onrender.com/api/orders/updateProduct/${producto.id}`, {
-            method: 'PATCH',
-            credentials:"include",
+            method: 'PUT',
             headers: {
+              'Authorization': `Bearer ${token}`,
               'Content-Type': 'application/json'
             },
             body: JSON.stringify(producto)

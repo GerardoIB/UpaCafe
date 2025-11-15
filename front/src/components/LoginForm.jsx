@@ -1,9 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, useRef } from "react";
 import { InputText } from "primereact/inputtext";
 import { Password } from "primereact/password";
 import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { Toast } from "primereact/toast";
+import Swal from "sweetalert2";
 import "./login.css";
 
 const Login = ({ onLoginSuccess }) => {
@@ -12,7 +13,7 @@ const Login = ({ onLoginSuccess }) => {
   const [loading, setLoading] = useState(false);
   const [showReset, setShowReset] = useState(false);
   const [resetEmail, setResetEmail] = useState("");
-  const toast = React.useRef(null);
+  const toast = useRef(null);
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -26,35 +27,47 @@ const Login = ({ onLoginSuccess }) => {
         body: JSON.stringify({ email, password }),
       });
 
-      if (!result.ok) throw new Error("Error en autenticación");
-
       const data = await result.json();
-      const res = await fetch("https://upacafe.onrender.com/api/user/protected", {
-        method: "GET",
-        credentials: "include",
-      });
 
-      if (res.ok) {
-        const userData = await res.json();
-        toast.current.show({
-          severity: "success",
-          summary: "Inicio de sesión correcto",
-          life: 3000,
+      if (result.ok) {
+        // Guardar token en localStorage
+        localStorage.setItem("access_token", data.token);
+        localStorage.setItem("user", JSON.stringify(data.user));
+
+        Swal.fire({
+          icon: "success",
+          title: "Login exitoso",
+          text: `Bienvenido ${data.user.nombre}`,
+          timer: 2000,
         });
-        onLoginSuccess(userData.user || userData);
+
+        if (onLoginSuccess) {
+          onLoginSuccess(data.user);
+        }
+
+        // Redirección por rol
+        const rol = data.user?.rol_id;
+        if (rol === 1) window.location.href = "/admin";
+        else if (rol === 2) window.location.href = "/trabajador";
+        else window.location.href = "/home";
+
       } else {
-        throw new Error("No se pudo validar la sesión");
+        Swal.fire({
+          icon: "error",
+          title: "Error",
+          text: data.message || "Credenciales incorrectas",
+        });
       }
+
     } catch (err) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: "Correo o contraseña incorrectos",
-        life: 3000,
+      Swal.fire({
+        icon: "error",
+        title: "Error de conexión",
+        text: "No se pudo conectar con el servidor",
       });
-    } finally {
-      setLoading(false);
     }
+
+    setLoading(false);
   };
 
   const handlePasswordReset = async () => {
@@ -75,7 +88,7 @@ const Login = ({ onLoginSuccess }) => {
       body: JSON.stringify({ email: resetEmail }),
     });
 
-    const dataReset = await result.json();
+    const data = await result.json();
 
     if (result.ok) {
       toast.current.show({
@@ -90,7 +103,7 @@ const Login = ({ onLoginSuccess }) => {
       toast.current.show({
         severity: "error",
         summary: "Error",
-        detail: `${dataReset.message}`,
+        detail: data.message,
         life: 4000,
       });
     }
@@ -153,11 +166,8 @@ const Login = ({ onLoginSuccess }) => {
             Crear cuenta
           </a>
         </div>
-
-
       </form>
 
-      {/* 🔹 Modal de recuperación */}
       <Dialog
         header="Recuperar contraseña"
         visible={showReset}

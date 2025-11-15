@@ -1,14 +1,17 @@
-import { useState } from 'react';
-import './Register.css';
+import { useState } from "react";
 import Swal from "sweetalert2";
+import { InputText } from "primereact/inputtext";
+import { Password } from "primereact/password";
+import { Button } from "primereact/button";
+import "./Register.css";
 
 const Register = () => {
   const [formData, setFormData] = useState({
-    email: '',
-    name: '',
-    phone: '',
-    password: '',
-    confirmPassword: ''
+    email: "",
+    name: "",
+    phone: "",
+    password: "",
+    confirmPassword: "",
   });
 
   const handleChange = (e) => {
@@ -18,184 +21,185 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    // Validación de contraseñas
+    // Validaciones
     if (formData.password !== formData.confirmPassword) {
       Swal.fire({
-        icon: 'error',
-        title: 'Contraseñas no coinciden',
-        text: 'Por favor verifica tu contraseña.',
+        icon: "error",
+        title: "Contraseñas no coinciden",
+        text: "Por favor verifica tu contraseña.",
       });
       return;
     }
 
-    // Validación de contraseña mínima
     if (formData.password.length < 6) {
       Swal.fire({
-        icon: 'error',
-        title: 'Contraseña muy corta',
-        text: 'La contraseña debe tener al menos 6 caracteres.',
+        icon: "error",
+        title: "Contraseña muy corta",
+        text: "Debe tener mínimo 6 caracteres.",
       });
       return;
     }
 
-    // Validación de email
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     if (!emailRegex.test(formData.email)) {
       Swal.fire({
-        icon: 'error',
-        title: 'Email inválido',
-        text: 'Por favor ingresa un email válido.',
+        icon: "error",
+        title: "Email inválido",
+        text: "Ingresa un email válido.",
       });
       return;
     }
 
-    // Validación de teléfono (7-15 dígitos)
     const phoneRegex = /^\+?\d{7,15}$/;
     if (!phoneRegex.test(formData.phone.trim())) {
       Swal.fire({
-        icon: 'error',
-        title: 'Teléfono inválido',
-        text: 'El teléfono debe tener entre 7 y 15 dígitos.',
+        icon: "error",
+        title: "Teléfono inválido",
+        text: "Debe tener entre 7 y 15 dígitos.",
       });
       return;
     }
 
     try {
-      // Preparar datos según tu API (solo email, password, name, phone)
       const payload = {
         email: formData.email,
         password: formData.password,
         name: formData.name,
-        phone: formData.phone
+        phone: formData.phone,
       };
 
-      const result = await fetch('https://upacafe.onrender.com/api/user/register', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
+      const response = await fetch("http://localhost:3000/api/user/register", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        credentials: "include",
         body: JSON.stringify(payload),
       });
 
-      const resultData = await result.json();
+      const resultData = await response.json();
 
-      if (result.ok) {
+      if (response.ok) {
         Swal.fire({
-          icon: 'success',
-          title: 'Registro exitoso',
-          text: `Usuario registrado. Revisa tu correo (${formData.email}) para verificar tu cuenta.`,
+          icon: "success",
+          title: "Registro exitoso",
+          text: `Revisa tu correo (${formData.email}) para verificar tu cuenta.`,
         });
 
-        // Limpia formulario
         setFormData({
-          email: '',
-          name: '',
-          phone: '',
-          password: '',
-          confirmPassword: ''
+          email: "",
+          name: "",
+          phone: "",
+          password: "",
+          confirmPassword: "",
         });
 
-        // Opcional: redirigir al login después de 2 segundos
         setTimeout(() => {
-          window.location.href = '/Login';
+          window.location.href = "/Login";
         }, 2000);
       } else {
         Swal.fire({
-          icon: 'error',
-          title: 'Error al registrar',
-          text: resultData.message || 'Hubo un error al registrar el usuario.',
+          icon: "error",
+          title: "Error al registrar",
+          text: resultData.message || "Hubo un error al registrar el usuario.",
         });
       }
     } catch (error) {
       Swal.fire({
-        icon: 'error',
-        title: 'Error de conexión',
-        text: 'No se pudo conectar con el servidor. Verifica tu conexión.',
+        icon: "error",
+        title: "Error de conexión",
+        text: "No se pudo conectar con el servidor.",
       });
-      console.error('Error:', error);
     }
   };
 
   return (
-    <div className="register-container">
-      <form onSubmit={handleSubmit} className="register-form">
-        <h2 className="register-title">Crear Cuenta</h2>
+    <div className="register-wrapper">
+      <form onSubmit={handleSubmit} className="register-card">
+        <h2 className="register-title">📝 Crear Cuenta</h2>
 
-        <div className="form-group">
-          <label htmlFor="email">Email *</label>
-          <input
-            type="email"
-            id="email"
-            name="email"
-            value={formData.email}
-            onChange={handleChange}
-            placeholder="tu@email.com"
-            required
-          />
+        {/* EMAIL */}
+        <div className="input-group">
+          <label>Email *</label>
+          <span className="p-input-icon-left">
+            <i className="pi pi-envelope" />
+            <InputText
+              name="email"
+              value={formData.email}
+              onChange={handleChange}
+              placeholder="correo@ejemplo.com"
+              required
+            />
+          </span>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="name">Nombre Completo *</label>
-          <input
-            type="text"
-            id="name"
-            name="name"
-            value={formData.name}
-            onChange={handleChange}
-            placeholder="Juan Pérez García"
-            required
-          />
+        {/* NAME */}
+        <div className="input-group">
+          <label>Nombre Completo *</label>
+          <span className="p-input-icon-left">
+            <i className="pi pi-user" />
+            <InputText
+              name="name"
+              value={formData.name}
+              onChange={handleChange}
+              placeholder="Juan Pérez"
+              required
+            />
+          </span>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="phone">Teléfono *</label>
-          <input
-            type="tel"
-            id="phone"
-            name="phone"
-            value={formData.phone}
-            onChange={handleChange}
-            placeholder="+52123456789"
-            required
-          />
-          <small style={{ color: '#666', fontSize: '0.85em' }}>
-            Entre 7 y 15 dígitos (puede incluir +)
-          </small>
+        {/* PHONE */}
+        <div className="input-group">
+          <label>Teléfono *</label>
+          <span className="p-input-icon-left">
+            <i className="pi pi-phone" />
+            <InputText
+              name="phone"
+              value={formData.phone}
+              onChange={handleChange}
+              placeholder="+521234567890"
+              required
+            />
+          </span>
+          <small className="helper-text">Entre 7 y 15 dígitos</small>
         </div>
 
-        <div className="form-group">
-          <label htmlFor="password">Contraseña *</label>
-          <input
-            type="password"
-            id="password"
+        {/* PASSWORD */}
+        <div className="input-group">
+          <label>Contraseña *</label>
+          <Password
             name="password"
             value={formData.password}
             onChange={handleChange}
             placeholder="Mínimo 6 caracteres"
+            toggleMask
+            feedback={false}
             required
           />
         </div>
 
-        <div className="form-group">
-          <label htmlFor="confirmPassword">Confirmar Contraseña *</label>
-          <input
-            type="password"
-            id="confirmPassword"
+        {/* CONFIRM PASSWORD */}
+        <div className="input-group">
+          <label>Confirmar Contraseña *</label>
+          <Password
             name="confirmPassword"
             value={formData.confirmPassword}
             onChange={handleChange}
             placeholder="Repite tu contraseña"
+            toggleMask
+            feedback={false}
             required
           />
         </div>
 
-        <button type="submit" className="register-button">
-          Registrarse
-        </button>
+        {/* SUBMIT */}
+        <Button
+          label="Registrarse"
+          icon="pi pi-user-plus"
+          className="p-button-success register-btn"
+          type="submit"
+        />
 
-        <p className="back-login">
-          ¿Ya tienes cuenta?{" "}
-          <a className="register-link" href="/Login">
-            Iniciar sesión
-          </a>
+        <p className="login-link">
+          ¿Ya tienes cuenta? <a href="/Login">Iniciar sesión</a>
         </p>
       </form>
     </div>

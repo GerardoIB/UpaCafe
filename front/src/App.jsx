@@ -26,27 +26,45 @@ function AppContent() {
   const [users, setUsers] = useState([]);
   const [id, setId] = useState(null);
   const [loading, setLoading] = useState(true);
-  const [sidebarOpen, setSidebarOpen] = useState(true); // 👉 Estado del sidebar
+  const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
-    const handleSidebarToggle = (newState) => {
+
+  const handleSidebarToggle = (newState) => {
     setSidebarOpen(newState);
   };
+
   useEffect(() => {
-    
     const checkUser = async () => {
       try {
-        const res = await fetch('https://upacafe.onrender.com/api/user/protected', {
+        // 1️⃣ Primero intenta con cookie (credentials: include)
+        let res = await fetch('https://upacafe.onrender.com/api/user/protected', {
           method: 'GET',
           credentials: 'include'
         });
+        
+        // 2️⃣ Si falla, intenta con localStorage token
+        if (!res.ok) {
+          const token = localStorage.getItem('access_token');
+          
+          if (token) {
+            res = await fetch('https://upacafe.onrender.com/api/user/protected', {
+              method: 'GET',
+              headers: {
+                'Authorization': `Bearer ${token}`
+              }
+            });
+          }
+        }
+        
         if (!res.ok) {
           setUser(null);
           setIsAuthenticated(false);
           return;
         }
+        
         const data = await res.json();
         setUser(data.user || data);
-        setId(data.user.id);
+        setId(data.user?.id);
         setIsAuthenticated(true);
       } catch (e) {
         console.error('Error al verificar sesión:', e);
@@ -63,33 +81,53 @@ function AppContent() {
     try {
       const res = await fetch('https://upacafe.onrender.com/api/user/logout', {
         method: 'POST',
-        credentials: 'include'
+        credentials: 'include'  // ✅ Envía cookies
       });
+      
       if (res.ok) {
         setIsAuthenticated(false);
         setUser(null);
+        navigate('/');
       }
     } catch (error) {
       console.error('Error en logout:', error);
+      // Forzar logout local aunque falle el servidor
+      setIsAuthenticated(false);
+      setUser(null);
+      navigate('/');
     }
   };
+
+  if (loading) {
+    return <div>Cargando...</div>;
+  }
 
   if (!isAuthenticated) {
     return (
       <Routes>
-        <Route path="/" element={<Login onLoginSuccess={(user) => { setUser(user); setIsAuthenticated(true); }} />} />
+        <Route 
+          path="/" 
+          element={
+            <Login 
+              onLoginSuccess={(user) => { 
+                setUser(user); 
+                setIsAuthenticated(true); 
+              }} 
+            />
+          } 
+        />
         <Route path="/register" element={<Register />} />
         <Route path="/verificar" element={<VerificarCorreo />} />
-        <Route path='/reset-password' element={ <ResetPassword />} />
+        <Route path='/reset-password' element={<ResetPassword />} />
         <Route path="*" element={<Navigate to="/" />} />
       </Routes>
     );
   }
-  const rol = user?.rol_id
+
+  const rol = user?.rol_id;
 
   return (
     <div className="app-layout">
-      {/* Pasamos onToggle y estado al Sidebar */}
       <Sidebar 
         onNavigate={(ruta) => navigate(ruta)} 
         onLogout={handleLogout} 
@@ -97,49 +135,45 @@ function AppContent() {
         onToggle={handleSidebarToggle} 
       />
 
-      {/* Header recibe el estado del sidebar */}
       <Header 
         user={user} 
         onLogout={handleLogout} 
         sidebarCollapsed={!sidebarOpen} 
       />
         
-      
-      {/* Contenido principal ajustable */}
       <div className={`main-content ${!sidebarOpen ? 'collapsed' : ''}`}>
-          <Routes>
-            {rol === 1 && (
-              <>
-                <Route path="/agregarProducto" element={<AgregarProducto />} />
-                <Route path="/admin" element={<DashboardHome />} />
-                <Route path="/orders" element={<AdminOrders />} />
-                <Route path="/manage-users" element={<AdminUsers />} />
-                <Route path="/add-employee" element={<AgregarTrabajador />} />
-                <Route path="/inventario" element={<GestionInventario />} />
-                <Route path="*" element={<Navigate to="/admin" />} />
-              </>
-            )}
-            {rol === 2 && (
-              <>
-                <Route path="/trabajador" element={<TrabajadorDashboard user={user} />} />
-                <Route path="/addPedido" element={<CrearPedido />} />
-                <Route path="*" element={<Navigate to="/trabajador" />} />
-              </>
-            )}
-            {rol === 3 && (
-              <>
-                <Route path="/exam" element={<UsersTable users={users} />} />
-                <Route path="/home" element={<Home user={user} />} />
-                <Route path="/tickets" element={<Tickets />} />
-                <Route path="/crear-pedido" element={<CrearPedido />} />
-                <Route path="/MisPedidos" element={<MisPedidos user={id} />} />
-                <Route path="*" element={<Navigate to="/home" />} />
-              </>
-            )}
-          </Routes>
-        </div>
+        <Routes>
+          {rol === 1 && (
+            <>
+              <Route path="/agregarProducto" element={<AgregarProducto />} />
+              <Route path="/admin" element={<DashboardHome />} />
+              <Route path="/orders" element={<AdminOrders />} />
+              <Route path="/manage-users" element={<AdminUsers />} />
+              <Route path="/add-employee" element={<AgregarTrabajador />} />
+              <Route path="/inventario" element={<GestionInventario />} />
+              <Route path="*" element={<Navigate to="/admin" />} />
+            </>
+          )}
+          {rol === 2 && (
+            <>
+              <Route path="/trabajador" element={<TrabajadorDashboard user={user} />} />
+              <Route path="/addPedido" element={<CrearPedido />} />
+              <Route path="*" element={<Navigate to="/trabajador" />} />
+            </>
+          )}
+          {rol === 3 && (
+            <>
+              <Route path="/exam" element={<UsersTable users={users} />} />
+              <Route path="/home" element={<Home user={user} />} />
+              <Route path="/tickets" element={<Tickets />} />
+              <Route path="/crear-pedido" element={<CrearPedido />} />
+              <Route path="/MisPedidos" element={<MisPedidos user={id} />} />
+              <Route path="*" element={<Navigate to="/home" />} />
+            </>
+          )}
+        </Routes>
       </div>
-  
+    </div>
   );
 }
 
