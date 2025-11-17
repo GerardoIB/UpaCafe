@@ -10,7 +10,7 @@ dotenv.config();
 export const sendVerificationEmail = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/verificar?token=${token}`;
   const data = await resend.emails.send({
-    from: '"Cafetería UPA" <no-reply@cafeteria.com>',
+    from: '"onboarding@resend.dev',
     to: email,
     subject: 'Verifica tu correo electrónico',
     html: `
@@ -25,7 +25,7 @@ export const sendResetPassword = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/reset-password?token=${token}`;
 
   const data = await resend.emails.send({
-    from: '"Cafetería UPA" <no-reply@cafeteria.com>',
+    from: 'onboarding@resend.dev',
     to: email,
     subject: 'Restablece tu contraseña',
     html: `
