@@ -68,7 +68,7 @@ const Register = () => {
         phone: formData.phone,
       };
 
-      const response = await fetch("http://localhost:3000/api/user/register", {
+      const response = await fetch("https://upacafe.onrender.com/api/user/register", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         credentials: "include",
