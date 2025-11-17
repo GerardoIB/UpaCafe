@@ -1,51 +1,324 @@
+/* CrudIngredientes.css */
+
 .crud-ingredientes-container {
   padding: 2rem;
   background-color: #f7fdf9;
   border-radius: 1rem;
+  min-height: auto;
+  /* IMPORTANTE: z-index controlado */
+  position: relative;
+  z-index: 1;
 }
 
 .header {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 1rem;
+  margin-bottom: 2rem;
+  flex-wrap: wrap;
+  gap: 1rem;
 }
 
 h2 {
-  color: #388e3c;
+  color: #2e7d32;
+  margin: 0;
+  font-size: 1.5rem;
 }
 
+/* Tabla */
+.p-datatable {
+  background: white;
+  border-radius: 0.5rem;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.p-datatable-table {
+  width: 100%;
+}
+
+.p-datatable-wrapper {
+  overflow-x: auto;
+}
+
+.p-column-header-content {
+  background-color: #e8f5e9 !important;
+  color: #2e7d32 !important;
+  font-weight: 600 !important;
+}
+
+.p-datatable .p-datatable-thead > tr > th {
+  background-color: #2e7d32 !important;
+  color: white !important;
+  font-weight: 600;
+}
+
+/* Botones principales */
 .p-button {
-  background-color: #388e3c !important;
+  background-color: #2e7d32 !important;
   border: none !important;
+  border-radius: 6px !important;
+  transition: all 0.2s;
+}
+
+.p-button:hover {
+  background-color: #388e3c !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
 }
 
 .p-button-text {
-  color: #388e3c !important;
+  color: #2e7d32 !important;
+  background-color: transparent !important;
 }
 
+.p-button-outlined {
+  border: 1px solid #2e7d32 !important;
+  color: #2e7d32 !important;
+  background-color: transparent !important;
+}
+
+.p-button-outlined:hover {
+  background-color: #e8f5e9 !important;
+}
+
+/* Acciones */
 .acciones {
   display: flex;
   gap: 0.5rem;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: nowrap;
 }
 
+.acciones button {
+  width: 2.5rem !important;
+  height: 2.5rem !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  border-radius: 50% !important;
+}
+
+.acciones .p-button-rounded {
+  border-radius: 50% !important;
+}
+
+.acciones .p-button.p-button-outlined {
+  background-color: transparent !important;
+  border: 1px solid #6c757d !important;
+  color: #6c757d !important;
+}
+
+.acciones .p-button.p-button-outlined:hover {
+  background-color: #6c757d !important;
+  color: white !important;
+}
+
+.acciones .p-button-danger {
+  border: 1px solid #dc3545 !important;
+  color: #dc3545 !important;
+}
+
+.acciones .p-button-danger:hover {
+  background-color: #dc3545 !important;
+  color: white !important;
+}
+
+/* Formulario */
 .form-field {
   display: flex;
   flex-direction: column;
-  margin-bottom: 1rem;
+  margin-bottom: 1.5rem;
 }
 
 .form-field label {
   font-weight: 600;
-  color: #388e3c;
-  margin-bottom: 0.3rem;
+  color: #2e7d32;
+  margin-bottom: 0.5rem;
+  font-size: 14px;
 }
 
-.p-dialog .p-button {
-  background-color: #388e3c !important;
+.p-inputtext {
+  width: 100%;
+  padding: 10px 12px;
+  border: 1px solid #ddd;
+  border-radius: 6px;
+  font-size: 14px;
+  transition: border-color 0.2s;
 }
 
-.p-dialog .p-button-outlined {
-  border-color: #388e3c !important;
-  color: #388e3c !important;
+.p-inputtext:focus {
+  border-color: #66bb6a;
+  box-shadow: 0 0 0 3px rgba(102, 187, 106, 0.1);
+}
+
+.p-inputtext.p-invalid {
+  border-color: #dc3545;
+}
+
+/* Dialog (Modal) */
+.p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.5) !important;
+  z-index: 1050 !important; /* Mayor que header */
+}
+
+.p-dialog {
+  border-radius: 1rem !important;
+  overflow: hidden !important;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1051 !important;
+}
+
+.p-dialog .p-dialog-header {
+  background-color: #2e7d32 !important;
+  color: #fff !important;
+  font-weight: bold;
+  padding: 1.5rem !important;
+}
+
+.p-dialog .p-dialog-content {
+  background-color: #ffffff !important;
+  padding: 1.5rem !important;
+}
+
+.p-dialog .p-dialog-footer {
+  background-color: #f1f8e9 !important;
+  padding: 1rem 1.5rem !important;
+  border-top: 1px solid #c8e6c9;
+}
+
+.p-dialog .p-dialog-footer .p-button {
+  margin: 0 0.5rem;
+}
+
+/* Paginación */
+.p-paginator {
+  background-color: #f1f8e9 !important;
+  border-bottom-left-radius: 0.5rem;
+  border-bottom-right-radius: 0.5rem;
+  padding: 0.5rem !important;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background-color: #2e7d32 !important;
+  border-color: #2e7d32 !important;
+  color: white !important;
+}
+
+/* Toast */
+.p-toast {
+  z-index: 1100 !important;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .crud-ingredientes-container {
+    padding: 1rem;
+  }
+
+  .header {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1rem;
+  }
+
+  .header h2 {
+    font-size: 1.3rem;
+  }
+
+  .header .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.75rem 0.5rem;
+    font-size: 0.9rem;
+  }
+
+  .acciones {
+    gap: 0.3rem;
+  }
+
+  .acciones button {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  .p-dialog {
+    width: 95% !important;
+    max-width: 400px !important;
+    margin: 0.5rem !important;
+  }
+
+  .p-dialog .p-dialog-header {
+    padding: 1rem !important;
+    font-size: 1.1rem;
+  }
+
+  .p-dialog .p-dialog-content {
+    padding: 1rem !important;
+  }
+
+  .form-field {
+    margin-bottom: 1rem;
+  }
+
+  .p-paginator {
+    font-size: 0.85rem;
+  }
+}
+
+@media (max-width: 480px) {
+  .crud-ingredientes-container {
+    padding: 0.5rem;
+  }
+
+  .header h2 {
+    font-size: 1.1rem;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .acciones button {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+    font-size: 0.8rem;
+  }
+
+  .p-dialog {
+    width: 98% !important;
+  }
+
+  .p-button {
+    font-size: 0.9rem;
+    padding: 0.5rem 1rem;
+  }
+}
+
+/* Mejoras de usabilidad móvil */
+@media (max-width: 768px) {
+  /* Hacer tabla scrolleable horizontalmente */
+  .p-datatable-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Mejorar área táctil de botones */
+  .acciones button,
+  .p-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Mejorar inputs en móvil */
+  .p-inputtext {
+    font-size: 16px; /* Evita zoom en iOS */
+    padding: 12px;
+  }
 }

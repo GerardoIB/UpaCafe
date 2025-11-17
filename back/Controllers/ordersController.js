@@ -227,5 +227,15 @@ export class OrdersController {
             console.log(e)
         }
     }
+    deletIngrediente = (req,res) => {
+        try{
+            const id = req.params
+            const result = this.ordersModel.deleteIngrediente(id)
+            res.status(200).json({message:"Este ingrediente ha sido eiminado"})
 
+        }catch(e){
+            res.status(500).json({message:"Ha sucedido algo inesperado"})
+            console.log(e)
+        }
+    }
 }

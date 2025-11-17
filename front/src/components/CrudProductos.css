@@ -1,8 +1,12 @@
+/* CrudProductos.css */
+
 .crud-productos-container {
   padding: 2rem;
-  background-color: #f7fdf9;
-  border-radius: 1rem;
-  min-height: auto;
+  background: linear-gradient(135deg, #f7fdf9 0%, #e8f5e9 100%);
+  border-radius: 0 0 1rem 1rem;
+  min-height: 500px;
+  position: relative;
+  z-index: 1;
 }
 
 .header {
@@ -12,52 +16,115 @@
   margin-bottom: 2rem;
   flex-wrap: wrap;
   gap: 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 2px solid rgba(46, 125, 50, 0.1);
 }
 
 h2 {
   color: #2e7d32;
   margin: 0;
+  font-size: 1.5rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
 }
 
-/* Estilos para la tabla */
+/* === TABLA ESTILIZADA === */
 .p-datatable {
   background: white;
-  border-radius: 0.5rem;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  border: 1px solid rgba(46, 125, 50, 0.1);
 }
 
 .p-datatable-table {
   width: 100%;
+  table-layout: auto;
 }
 
-.p-column-header {
-  background-color: #e8f5e9 !important;
-  color: #2e7d32 !important;
-  font-weight: 600 !important;
+.p-datatable-wrapper {
+  overflow-x: auto;
+  -webkit-overflow-scrolling: touch;
 }
 
-/* Botones principales */
-.p-button {
-  background-color: #2e7d32 !important;
+/* Header de la tabla con gradiente */
+.p-datatable .p-datatable-thead > tr > th {
+  background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%) !important;
+  color: white !important;
+  font-weight: 600;
+  padding: 15px;
+  white-space: nowrap;
+  text-align: left;
   border: none !important;
+}
+
+/* Filas de la tabla */
+.p-datatable .p-datatable-tbody > tr {
+  transition: all 0.2s ease;
+}
+
+.p-datatable .p-datatable-tbody > tr:nth-child(even) {
+  background-color: #f9fdf9;
+}
+
+.p-datatable .p-datatable-tbody > tr:hover {
+  background: linear-gradient(90deg, #e8f5e9 0%, #f1f8e9 100%) !important;
+  transform: translateX(3px);
+  box-shadow: -3px 0 0 0 #66bb6a;
+}
+
+.p-datatable .p-datatable-tbody > tr > td {
+  padding: 15px;
+  vertical-align: middle;
+  border-bottom: 1px solid rgba(46, 125, 50, 0.05);
+}
+
+/* === BOTONES PRINCIPALES === */
+.p-button {
+  background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%) !important;
+  border: none !important;
+  border-radius: 8px !important;
+  padding: 10px 20px !important;
+  font-weight: 500 !important;
+  transition: all 0.3s ease !important;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.2);
+}
+
+.p-button:hover {
+  background: linear-gradient(135deg, #388e3c 0%, #43a047 100%) !important;
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(46, 125, 50, 0.3);
+}
+
+.p-button:active {
+  transform: translateY(0);
 }
 
 .p-button-text {
   color: #2e7d32 !important;
-}
-
-.p-button-outlined {
-  border-color: #2e7d32 !important;
-  color: #2e7d32 !important;
   background-color: transparent !important;
 }
 
-/* Acciones - ESTILOS MEJORADOS */
+.p-button-outlined {
+  border: 2px solid #2e7d32 !important;
+  color: #2e7d32 !important;
+  background: white !important;
+}
+
+.p-button-outlined:hover {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8e9 100%) !important;
+  border-color: #388e3c !important;
+}
+
+/* === ACCIONES === */
 .acciones {
   display: flex;
   gap: 0.5rem;
   justify-content: center;
   align-items: center;
+  flex-wrap: nowrap;
+  min-width: 7rem;
 }
 
 .acciones button {
@@ -66,33 +133,61 @@ h2 {
   display: flex !important;
   align-items: center !important;
   justify-content: center !important;
+  border-radius: 50% !important;
+  padding: 0 !important;
+  transition: all 0.2s ease;
 }
 
-.acciones .p-button {
-  background-color: transparent !important;
+/* Botón editar */
+.acciones .p-button-outlined:not(.p-button-danger) {
+  background: white !important;
+  border: 2px solid #2196f3 !important;
+  color: #2196f3 !important;
 }
 
-.acciones .p-button.p-button-secondary {
-  color: #6c757d !important;
-  border-color: #6c757d !important;
-}
-
-.acciones .p-button.p-button-danger {
-  color: #dc3545 !important;
-  border-color: #dc3545 !important;
-}
-
-.acciones .p-button.p-button-secondary:hover {
-  background-color: #6c757d !important;
+.acciones .p-button-outlined:not(.p-button-danger):hover {
+  background: linear-gradient(135deg, #2196f3 0%, #1976d2 100%) !important;
   color: white !important;
+  transform: scale(1.1);
 }
 
-.acciones .p-button.p-button-danger:hover {
-  background-color: #dc3545 !important;
+/* Botón eliminar */
+.acciones .p-button-danger {
+  border: 2px solid #f44336 !important;
+  color: #f44336 !important;
+  background: white !important;
+}
+
+.acciones .p-button-danger:hover {
+  background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%) !important;
   color: white !important;
+  transform: scale(1.1);
 }
 
-/* Formulario */
+/* === BADGES === */
+.badge {
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  display: inline-block;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.badge-success {
+  background: linear-gradient(135deg, #4caf50 0%, #66bb6a 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.3);
+}
+
+.badge-danger {
+  background: linear-gradient(135deg, #f44336 0%, #e57373 100%);
+  color: white;
+  box-shadow: 0 2px 8px rgba(244, 67, 54, 0.3);
+}
+
+/* === FORMULARIO === */
 .form-field {
   display: flex;
   flex-direction: column;
@@ -103,150 +198,263 @@ h2 {
   font-weight: 600;
   color: #2e7d32;
   margin-bottom: 0.5rem;
+  font-size: 14px;
 }
 
-.p-inputtext, .p-inputnumber, .p-dropdown, .p-multiselect {
+.p-inputtext,
+.p-inputnumber input,
+.p-dropdown,
+.p-multiselect {
   width: 100%;
+  padding: 12px 15px;
+  border: 2px solid #e0e0e0;
+  border-radius: 8px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  background: white;
 }
 
-/* Dialog mejorado */
+.p-inputtext:focus,
+.p-inputnumber input:focus,
+.p-dropdown:focus,
+.p-multiselect:focus {
+  border-color: #66bb6a;
+  box-shadow: 0 0 0 4px rgba(102, 187, 106, 0.1);
+  outline: none;
+}
+
+.p-inputtext.p-invalid {
+  border-color: #f44336;
+  box-shadow: 0 0 0 4px rgba(244, 67, 54, 0.1);
+}
+
+.p-error {
+  color: #f44336;
+  font-size: 0.85rem;
+  margin-top: 0.3rem;
+  font-weight: 500;
+}
+
+/* === DIALOG (MODAL) === */
+.p-dialog-mask {
+  background-color: rgba(0, 0, 0, 0.6) !important;
+  backdrop-filter: blur(4px);
+  z-index: 1050 !important;
+}
+
+.p-dialog {
+  border-radius: 16px !important;
+  overflow: hidden !important;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3) !important;
+  z-index: 1051 !important;
+  border: none !important;
+}
+
 .p-dialog .p-dialog-header {
-  background-color: #2e7d32;
-  color: white;
+  background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%) !important;
+  color: #fff !important;
+  font-weight: bold;
+  padding: 1.5rem !important;
+  border-bottom: none !important;
+}
+
+.p-dialog .p-dialog-header .p-dialog-title {
+  font-size: 1.2rem;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon {
+  color: white !important;
+  transition: all 0.2s;
+}
+
+.p-dialog .p-dialog-header .p-dialog-header-icon:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  transform: scale(1.1);
 }
 
 .p-dialog .p-dialog-content {
-  padding: 1.5rem;
+  background: linear-gradient(135deg, #ffffff 0%, #f9fdf9 100%) !important;
+  padding: 2rem 1.5rem !important;
 }
 
-/* Paginación */
+.p-dialog .p-dialog-footer {
+  background: linear-gradient(135deg, #f7fdf9 0%, #e8f5e9 100%) !important;
+  padding: 1rem 1.5rem !important;
+  border-top: 1px solid rgba(46, 125, 50, 0.1);
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.75rem;
+}
+
+/* === PAGINACIÓN === */
 .p-paginator {
-  background-color: #f1f8e9 !important;
-  border-bottom-left-radius: 0.5rem;
-  border-bottom-right-radius: 0.5rem;
+  background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%) !important;
+  border-top: 1px solid rgba(46, 125, 50, 0.1);
+  padding: 0.75rem !important;
 }
 
-/* Responsive */
+.p-paginator .p-paginator-pages .p-paginator-page {
+  border-radius: 6px;
+  transition: all 0.2s;
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page.p-highlight {
+  background: linear-gradient(135deg, #2e7d32 0%, #388e3c 100%) !important;
+  border-color: #2e7d32 !important;
+  color: white !important;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.3);
+}
+
+.p-paginator .p-paginator-pages .p-paginator-page:hover:not(.p-highlight) {
+  background-color: #e8f5e9 !important;
+}
+
+/* Toast */
+.p-toast {
+  z-index: 1100 !important;
+}
+
+/* Dropdown y MultiSelect */
+.p-dropdown-panel,
+.p-multiselect-panel {
+  z-index: 1052 !important;
+  border-radius: 8px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.15);
+}
+
+/* === RESPONSIVE === */
 @media (max-width: 768px) {
   .crud-productos-container {
     padding: 1rem;
   }
-  
+
   .header {
     flex-direction: column;
-    align-items: flex-start;
+    align-items: stretch;
+    gap: 1rem;
   }
-  
-  .acciones {
-    flex-direction: column;
-    align-items: center;
+
+  .header h2 {
+    font-size: 1.3rem;
   }
-  
+
+  .header .p-button {
+    width: 100%;
+    justify-content: center;
+  }
+
   .p-datatable .p-datatable-thead > tr > th,
   .p-datatable .p-datatable-tbody > tr > td {
-    padding: 0.5rem;
+    padding: 0.75rem 0.5rem;
     font-size: 0.9rem;
   }
-}
-.p-dialog .p-field {
-  margin-bottom: 1rem;
+
+  .acciones {
+    gap: 0.3rem;
+    min-width: auto;
+  }
+
+  .acciones button {
+    width: 2rem !important;
+    height: 2rem !important;
+  }
+
+  .badge {
+    padding: 4px 10px;
+    font-size: 0.75rem;
+  }
+
+  .p-dialog {
+    width: 95% !important;
+    max-width: 450px !important;
+    margin: 0.5rem !important;
+  }
+
+  .p-dialog .p-dialog-header {
+    padding: 1rem !important;
+  }
+
+  .p-dialog .p-dialog-content {
+    padding: 1.5rem 1rem !important;
+  }
+
+  .p-dialog .p-dialog-footer {
+    padding: 0.75rem 1rem !important;
+    flex-wrap: wrap;
+  }
+
+  .p-dialog .p-dialog-footer .p-button {
+    flex: 1;
+    min-width: 120px;
+  }
+
+  .form-field {
+    margin-bottom: 1rem;
+  }
 }
 
-.p-dialog label {
-  font-weight: 600;
-  color: #333;
+@media (max-width: 480px) {
+  .crud-productos-container {
+    padding: 0.75rem;
+  }
+
+  .header h2 {
+    font-size: 1.1rem;
+  }
+
+  .p-datatable .p-datatable-thead > tr > th,
+  .p-datatable .p-datatable-tbody > tr > td {
+    padding: 0.5rem 0.3rem;
+    font-size: 0.85rem;
+  }
+
+  .acciones button {
+    width: 1.8rem !important;
+    height: 1.8rem !important;
+  }
+
+  .p-button {
+    font-size: 0.9rem;
+    padding: 0.6rem 1rem !important;
+  }
 }
 
-.p-dialog input,
-.p-dialog select {
-  width: 100%;
-}
-/* === Corrección visual para el modal (Dialog) === */
-.p-dialog-mask {
-  background-color: rgba(0, 0, 0, 0.5) !important;
+/* Mejoras de usabilidad móvil */
+@media (max-width: 768px) {
+  .acciones button,
+  .p-button {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  .p-inputtext,
+  .p-inputnumber input,
+  .p-dropdown,
+  .p-multiselect {
+    font-size: 16px;
+    padding: 12px;
+  }
+
+  .p-dialog {
+    max-height: 90vh !important;
+  }
+
+  .p-dialog .p-dialog-content {
+    max-height: calc(90vh - 150px);
+    overflow-y: auto;
+  }
 }
 
-.p-dialog {
-  border-radius: 1rem !important;
-  overflow: hidden !important;
+/* Scrollbar del modal */
+.p-dialog .p-dialog-content::-webkit-scrollbar {
+  width: 6px;
 }
 
-.p-dialog .p-dialog-header {
-  background-color: #2e7d32 !important;
-  color: #fff !important;
-  font-weight: bold;
+.p-dialog .p-dialog-content::-webkit-scrollbar-track {
+  background: #f1f1f1;
 }
 
-.p-dialog .p-dialog-content {
-  background-color: #ffffff !important;
-  padding: 1.5rem !important;
-}
-
-.p-dialog .p-dialog-footer {
-  background-color: #f1f8e9 !important;
-  padding: 1rem !important;
-  border-top: 1px solid #c8e6c9;
-}
-
-.p-dialog .p-button {
-  border-radius: 0.5rem !important;
-}
-
-.acciones-btns {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: center;
-}
-
-.p-button-text.p-button-rounded {
-  border-radius: 50% !important;
-}
-
-.p-button-text {
-  color: #2e7d32 !important;
-  transition: 0.2s ease;
-}
-
-.p-button-text:hover {
-  background-color: #e8f5e9 !important;
-}
-/* === Corrección para que las acciones sean visibles === */
-.p-datatable-wrapper {
-  overflow-x: auto !important; /* Permite scroll si la tabla es muy ancha */
-}
-
-.p-datatable-table {
-  table-layout: auto !important; /* Ajusta automáticamente las columnas */
-  width: 100% !important;
-}
-
-/* Asegura que las acciones se vean centradas */
-.acciones {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  gap: 0.5rem;
-  min-width: 7rem; /* Evita que se colapse el espacio */
-}
-
-.acciones .p-button {
-  width: 2.3rem !important;
-  height: 2.3rem !important;
-  border-radius: 50% !important;
-  display: flex !important;
-  align-items: center !important;
-  justify-content: center !important;
-}
-
-/* Columna de acciones más visible */
-.p-datatable-tbody > tr > td:last-child {
-  white-space: nowrap !important;
-}
-.acciones .p-button-outlined {
-  border-color: #2e7d32 !important;
-  color: #2e7d32 !important;
-}
-
-.acciones .p-button-outlined:hover {
-  background-color: #e8f5e9 !important;
+.p-dialog .p-dialog-content::-webkit-scrollbar-thumb {
+  background: #66bb6a;
+  border-radius: 3px;
 }

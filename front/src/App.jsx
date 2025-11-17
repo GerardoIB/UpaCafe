@@ -29,20 +29,52 @@ function AppContent() {
   const [sidebarOpen, setSidebarOpen] = useState(true);
   const navigate = useNavigate();
 
+  // 🆕 Detectar si es móvil
+  const [isMobile, setIsMobile] = useState(window.innerWidth <= 768);
+
+  // 🆕 Escuchar cambios de tamaño de ventana
+  useEffect(() => {
+    const handleResize = () => {
+      const mobile = window.innerWidth <= 768;
+      setIsMobile(mobile);
+      // En móvil, cerrar sidebar por defecto
+      if (mobile) {
+        setSidebarOpen(false);
+      } else {
+        setSidebarOpen(true);
+      }
+    };
+
+    window.addEventListener('resize', handleResize);
+    handleResize(); // Ejecutar al montar
+
+    return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
   const handleSidebarToggle = (newState) => {
     setSidebarOpen(newState);
+  };
+
+  // 🆕 Función para alternar sidebar (hamburguesa)
+  const toggleSidebar = () => {
+    setSidebarOpen(!sidebarOpen);
+  };
+
+  // 🆕 Cerrar sidebar en móvil al hacer clic en overlay
+  const closeSidebar = () => {
+    if (isMobile) {
+      setSidebarOpen(false);
+    }
   };
 
   useEffect(() => {
     const checkUser = async () => {
       try {
-        // 1️⃣ Primero intenta con cookie (credentials: include)
         let res = await fetch('https://upacafe.onrender.com/api/user/protected', {
           method: 'GET',
           credentials: 'include'
         });
         
-        // 2️⃣ Si falla, intenta con localStorage token
         if (!res.ok) {
           const token = localStorage.getItem('access_token');
           
@@ -81,7 +113,7 @@ function AppContent() {
     try {
       const res = await fetch('https://upacafe.onrender.com/api/user/logout', {
         method: 'POST',
-        credentials: 'include'  // ✅ Envía cookies
+        credentials: 'include'
       });
       
       if (res.ok) {
@@ -91,7 +123,6 @@ function AppContent() {
       }
     } catch (error) {
       console.error('Error en logout:', error);
-      // Forzar logout local aunque falle el servidor
       setIsAuthenticated(false);
       setUser(null);
       navigate('/');
@@ -99,7 +130,18 @@ function AppContent() {
   };
 
   if (loading) {
-    return <div>Cargando...</div>;
+    return (
+      <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh',
+        fontSize: '1.2rem',
+        color: 'var(--verde-oscuro)'
+      }}>
+        Cargando...
+      </div>
+    );
   }
 
   if (!isAuthenticated) {
@@ -129,49 +171,65 @@ function AppContent() {
   return (
     <div className="app-layout">
       <Sidebar 
-        onNavigate={(ruta) => navigate(ruta)} 
+        onNavigate={(ruta) => {
+          navigate(ruta);
+          closeSidebar(); // 🆕 Cerrar sidebar en móvil al navegar
+        }} 
         onLogout={handleLogout} 
         user={user} 
-        onToggle={handleSidebarToggle} 
+        onToggle={handleSidebarToggle}
+        isOpen={sidebarOpen} // 🆕 Pasar estado
       />
 
-      <Header 
-        user={user} 
-        onLogout={handleLogout} 
-        sidebarCollapsed={!sidebarOpen} 
-      />
-        
+      {/* 🆕 Overlay para cerrar sidebar en móvil */}
+      {isMobile && sidebarOpen && (
+        <div 
+          className={`sidebar-overlay ${sidebarOpen ? 'active' : ''}`}
+          onClick={closeSidebar}
+        />
+      )}
+
       <div className={`main-content ${!sidebarOpen ? 'collapsed' : ''}`}>
-        <Routes>
-          {rol === 1 && (
-            <>
-              <Route path="/agregarProducto" element={<AgregarProducto />} />
-              <Route path="/admin" element={<DashboardHome />} />
-              <Route path="/orders" element={<AdminOrders />} />
-              <Route path="/manage-users" element={<AdminUsers />} />
-              <Route path="/add-employee" element={<AgregarTrabajador />} />
-              <Route path="/inventario" element={<GestionInventario />} />
-              <Route path="*" element={<Navigate to="/admin" />} />
-            </>
-          )}
-          {rol === 2 && (
-            <>
-              <Route path="/trabajador" element={<TrabajadorDashboard user={user} />} />
-              <Route path="/addPedido" element={<CrearPedido />} />
-              <Route path="*" element={<Navigate to="/trabajador" />} />
-            </>
-          )}
-          {rol === 3 && (
-            <>
-              <Route path="/exam" element={<UsersTable users={users} />} />
-              <Route path="/home" element={<Home user={user} />} />
-              <Route path="/tickets" element={<Tickets />} />
-              <Route path="/crear-pedido" element={<CrearPedido />} />
-              <Route path="/MisPedidos" element={<MisPedidos user={id} />} />
-              <Route path="*" element={<Navigate to="/home" />} />
-            </>
-          )}
-        </Routes>
+        <Header 
+          user={user} 
+          onLogout={handleLogout} 
+          sidebarCollapsed={!sidebarOpen}
+          onMenuToggle={toggleSidebar} // 🆕 Pasar función hamburguesa
+          isMobile={isMobile} // 🆕 Pasar si es móvil
+        />
+        
+        <div className="app-content">
+          <Routes>
+            {rol === 1 && (
+              <>
+                <Route path="/agregarProducto" element={<AgregarProducto />} />
+                <Route path="/admin" element={<DashboardHome />} />
+                <Route path="/orders" element={<AdminOrders />} />
+                <Route path="/manage-users" element={<AdminUsers />} />
+                <Route path="/add-employee" element={<AgregarTrabajador />} />
+                <Route path="/inventario" element={<GestionInventario />} />
+                <Route path="*" element={<Navigate to="/admin" />} />
+              </>
+            )}
+            {rol === 2 && (
+              <>
+                <Route path="/trabajador" element={<TrabajadorDashboard user={user} />} />
+                <Route path="/addPedido" element={<CrearPedido />} />
+                <Route path="*" element={<Navigate to="/trabajador" />} />
+              </>
+            )}
+            {rol === 3 && (
+              <>
+                <Route path="/exam" element={<UsersTable users={users} />} />
+                <Route path="/home" element={<Home user={user} />} />
+                <Route path="/tickets" element={<Tickets />} />
+                <Route path="/crear-pedido" element={<CrearPedido />} />
+                <Route path="/MisPedidos" element={<MisPedidos user={id} />} />
+                <Route path="*" element={<Navigate to="/home" />} />
+              </>
+            )}
+          </Routes>
+        </div>
       </div>
     </div>
   );

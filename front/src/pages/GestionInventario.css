@@ -1,50 +1,164 @@
+/* GestionInventario.css */
+
 .gestion-inventario-wrapper {
-  margin-top: 60px; /* espacio del header global */
-  padding: 20px;
-  background-color: var(--crema);
+  padding: 25px;
+  background-color: var(--crema, #f1f8e9);
   min-height: calc(100vh - 60px);
-  display: flex;
-  flex-direction: column;
-  overflow-y: auto;
+  position: relative;
+  z-index: 1;
 }
 
 .titulo-principal {
-  font-size: 1.8rem;
-  color: var(--verde-oscuro);
-  margin-bottom: 1rem;
-  text-align: left; /* título de sección */
-}
-
-/* TabView */
-.tabview-inventario {
-  background-color: white;
-  border-radius: 1rem;
-  box-shadow: 0 4px 10px rgba(0,0,0,0.1);
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.p-tabview-nav {
-  background-color: #e3f2fd;
-  border-radius: 1rem 1rem 0 0;
-}
-
-.p-tabview-nav li.p-highlight .p-tabview-nav-link {
-  background-color: var(--verde-oscuro) !important;
-  color: var(--crema) !important;
-}
-
-.p-tabview-nav-link {
-  color: var(--verde-oscuro) !important;
+  color: var(--verde-oscuro, #2e7d32);
+  font-size: 2rem;
   font-weight: 600;
+  margin-bottom: 25px;
+  padding-bottom: 15px;
+  border-bottom: 3px solid var(--verde-claro, #66bb6a);
 }
 
-.p-tabview-panels {
-  flex-grow: 1;
-  padding: 1rem;
-  overflow-y: auto;
-  background-color: #fff;
-  border-radius: 0 0 1rem 1rem;
+/* === TABS DE PRIMEREACT === */
+.tabview-inventario {
+  background: white;
+  border-radius: 12px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+  position: relative;
+  z-index: 1;
+}
+
+/* Contenedor de los tabs */
+.tabview-inventario .p-tabview-nav-container {
+  background: linear-gradient(135deg, var(--verde-oscuro, #2e7d32) 0%, var(--cafe-oscuro, #4e342e) 100%);
+  padding: 0;
+  border: none;
+}
+
+.tabview-inventario .p-tabview-nav {
+  background-color: transparent !important;
+  border: none !important;
+  display: flex;
+  gap: 5px;
+  padding: 10px;
+}
+
+/* Tabs individuales */
+.tabview-inventario .p-tabview-nav li {
+  margin: 0;
+}
+
+.tabview-inventario .p-tabview-nav li .p-tabview-nav-link {
+  background-color: rgba(255, 255, 255, 0.1) !important;
+  color: rgba(255, 255, 255, 0.8) !important;
+  font-weight: 500;
+  border: none !important;
+  border-radius: 8px 8px 0 0;
+  padding: 12px 24px;
+  transition: all 0.3s ease;
+  margin: 0;
+}
+
+.tabview-inventario .p-tabview-nav li .p-tabview-nav-link:hover {
+  background-color: rgba(255, 255, 255, 0.2) !important;
+  color: white !important;
+  transform: translateY(-2px);
+}
+
+/* Tab activo */
+.tabview-inventario .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+  background: linear-gradient(135deg, var(--verde-claro, #66bb6a) 0%, var(--verde-oscuro, #2e7d32) 100%) !important;
+  color: white !important;
+  border: none !important;
+  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.3);
+  transform: translateY(-2px);
+}
+
+.tabview-inventario .p-tabview-nav li.p-highlight .p-tabview-nav-link:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 6px 15px rgba(46, 125, 50, 0.4);
+}
+
+/* Barra inferior del tab (eliminar) */
+.tabview-inventario .p-tabview-ink-bar {
+  display: none;
+}
+
+/* Contenido de los tabs */
+.tabview-inventario .p-tabview-panels {
+  background: linear-gradient(135deg, #f7fdf9 0%, #e8f5e9 100%) !important;
+  padding: 0 !important;
+  border: none !important;
+}
+
+.tabview-inventario .p-tabview-panel {
+  padding: 0 !important;
+}
+
+/* === AJUSTES PARA Z-INDEX === */
+.p-dialog-mask {
+  z-index: 1050 !important;
+}
+
+.p-dialog {
+  z-index: 1051 !important;
+}
+
+.p-toast {
+  z-index: 1100 !important;
+}
+
+/* === RESPONSIVE === */
+@media (max-width: 768px) {
+  .gestion-inventario-wrapper {
+    padding: 15px;
+  }
+
+  .titulo-principal {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+  }
+
+  .tabview-inventario .p-tabview-nav {
+    padding: 8px;
+    gap: 3px;
+  }
+
+  .tabview-inventario .p-tabview-nav li .p-tabview-nav-link {
+    padding: 10px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 480px) {
+  .gestion-inventario-wrapper {
+    padding: 10px;
+  }
+
+  .titulo-principal {
+    font-size: 1.3rem;
+  }
+
+  .tabview-inventario .p-tabview-nav {
+    flex-direction: column;
+    gap: 5px;
+  }
+
+  .tabview-inventario .p-tabview-nav li {
+    width: 100%;
+  }
+
+  .tabview-inventario .p-tabview-nav li .p-tabview-nav-link {
+    width: 100%;
+    text-align: center;
+    border-radius: 8px;
+  }
+
+  .tabview-inventario .p-tabview-nav li.p-highlight .p-tabview-nav-link {
+    transform: translateY(0);
+  }
+
+  .tabview-inventario .p-tabview-nav li.p-highlight .p-tabview-nav-link:hover {
+    transform: scale(1.02);
+  }
 }

@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import {
   FaBars, FaHome, FaShoppingBag, FaUtensils,
   FaSignOutAlt, FaPlus, FaUsersCog, FaClipboardList,
@@ -6,90 +6,104 @@ import {
 } from 'react-icons/fa';
 import './Sidebar.css';
 
-const Sidebar = ({ onNavigate, onLogout, user, onToggle }) => {
-  const [isOpen, setIsOpen] = useState(true);
+const Sidebar = ({ onNavigate, onLogout, user, onToggle, isOpen }) => {
+  const [internalOpen, setInternalOpen] = useState(isOpen ?? true);
 
-  // 🔄 Maneja apertura/cierre y avisa al padre
+  // Sincronizar con prop externa
+  useEffect(() => {
+    if (isOpen !== undefined) {
+      setInternalOpen(isOpen);
+    }
+  }, [isOpen]);
+
   const handleToggle = () => {
-    const newState = !isOpen;
-    setIsOpen(newState);
+    const newState = !internalOpen;
+    setInternalOpen(newState);
     if (onToggle) onToggle(newState);
   };
 
-  // 📋 Renderizado del menú según el rol
+  const handleNavigation = (ruta) => {
+    onNavigate(ruta);
+    // En móvil, cerrar sidebar después de navegar
+    if (window.innerWidth <= 768) {
+      setInternalOpen(false);
+      if (onToggle) onToggle(false);
+    }
+  };
+
   const renderMenuByRole = () => {
     switch (user?.rol_id) {
-      case 1: // 🧑‍💼 ADMINISTRADOR
+      case 1: // ADMINISTRADOR
         return (
           <>
-            <div className="item" onClick={() => onNavigate('/home')}>
+            <div className="item" onClick={() => handleNavigation('/admin')}>
               <FaHome className="icon" />
-              {isOpen && <span>Panel</span>}
+              {internalOpen && <span>Panel</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/manage-users')}>
+            <div className="item" onClick={() => handleNavigation('/manage-users')}>
               <FaUsersCog className="icon" />
-              {isOpen && <span>Usuarios</span>}
+              {internalOpen && <span>Usuarios</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/orders')}>
+            <div className="item" onClick={() => handleNavigation('/orders')}>
               <FaClipboardList className="icon" />
-              {isOpen && <span>Pedidos</span>}
+              {internalOpen && <span>Pedidos</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/add-employee')}>
+            <div className="item" onClick={() => handleNavigation('/add-employee')}>
               <FaUserPlus className="icon" />
-              {isOpen && <span>Agregar empleado</span>}
+              {internalOpen && <span>Agregar empleado</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/inventario')}>
+            <div className="item" onClick={() => handleNavigation('/inventario')}>
               <FaTable className="icon" />
-              {isOpen && <span>Inventario</span>}
+              {internalOpen && <span>Inventario</span>}
             </div>
           </>
         );
 
-      case 2: // 👨‍🍳 TRABAJADOR
+      case 2: // TRABAJADOR
         return (
           <>
-            <div className="item" onClick={() => onNavigate('/home')}>
+            <div className="item" onClick={() => handleNavigation('/trabajador')}>
               <FaHome className="icon" />
-              {isOpen && <span>Inicio</span>}
+              {internalOpen && <span>Inicio</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/orders')}>
+            <div className="item" onClick={() => handleNavigation('/orders')}>
               <FaUtensils className="icon" />
-              {isOpen && <span>Pedidos activos</span>}
+              {internalOpen && <span>Pedidos activos</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/addPedido')}>
+            <div className="item" onClick={() => handleNavigation('/addPedido')}>
               <FaPlus className="icon" />
-              {isOpen && <span>Hacer pedido</span>}
+              {internalOpen && <span>Hacer pedido</span>}
             </div>
           </>
         );
 
-      default: // ☕ CLIENTE
+      default: // CLIENTE
         return (
           <>
-            <div className="item" onClick={() => onNavigate('/home')}>
+            <div className="item" onClick={() => handleNavigation('/home')}>
               <FaHome className="icon" />
-              {isOpen && <span>Inicio</span>}
+              {internalOpen && <span>Inicio</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/crear-pedido')}>
+            <div className="item" onClick={() => handleNavigation('/crear-pedido')}>
               <FaPlus className="icon" />
-              {isOpen && <span>Hacer pedido</span>}
+              {internalOpen && <span>Hacer pedido</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/MisPedidos')}>
+            <div className="item" onClick={() => handleNavigation('/MisPedidos')}>
               <FaShoppingBag className="icon" />
-              {isOpen && <span>Mis pedidos</span>}
+              {internalOpen && <span>Mis pedidos</span>}
             </div>
 
-            <div className="item" onClick={() => onNavigate('/tickets')}>
+            <div className="item" onClick={() => handleNavigation('/tickets')}>
               <FaUtensils className="icon" />
-              {isOpen && <span>Tickets</span>}
+              {internalOpen && <span>Tickets</span>}
             </div>
           </>
         );
@@ -97,23 +111,31 @@ const Sidebar = ({ onNavigate, onLogout, user, onToggle }) => {
   };
 
   return (
-    <div className={`sidebar ${isOpen ? 'open' : 'closed'}`}>
-      {/* 🔝 Logo y toggle */}
+    <div className={`sidebar ${internalOpen ? 'open' : 'closed'}`}>
       <div className="top-section">
-        <h2 className="logo">{isOpen ? 'Café Uni' : '☕'}</h2>
+        <h2 className="logo">{internalOpen ? 'Café Uni' : '☕'}</h2>
         <div className="toggle-btn" onClick={handleToggle} title="Expandir / Colapsar">
           <FaBars />
         </div>
       </div>
 
-      {/* 📁 Menú dinámico */}
+      {/* Info de usuario */}
+      {internalOpen && user && (
+        <div className="user-info">
+          <span className="user-icon">👤</span>
+          <div className="user-details">
+            <h3>{user.nombre}</h3>
+            <p>{user.email}</p>
+          </div>
+        </div>
+      )}
+
       <div className="menu-items">{renderMenuByRole()}</div>
 
-      {/* 🚪 Cerrar sesión */}
       <div className="logout-section" onClick={onLogout}>
         <div className="item logout">
           <FaSignOutAlt className="icon" />
-          {isOpen && <span>Cerrar sesión</span>}
+          {internalOpen && <span>Cerrar sesión</span>}
         </div>
       </div>
     </div>
