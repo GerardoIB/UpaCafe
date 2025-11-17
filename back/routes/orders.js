@@ -21,7 +21,7 @@ export const createRouterOrders = ({ordersModel,io})=>{
     orderRouter.get("/productos/:id/ingredientes",ordersController.getIngredientesByProducto)
     orderRouter.delete('/delete/:idProd',ordersController.deleteProduct)
     orderRouter.patch('/update/:id',ordersController.updateProduct)
-    orderRouter.delete('(ingredientes/:id', ordersController.deletIngrediente)
+    orderRouter.delete('/ingredientes/:id', ordersController.deletIngrediente)
 
 
 
