@@ -11,7 +11,7 @@ export const sendVerificationEmail = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/verificar?token=${token}`;
   const data = await resend.emails.send({
     from: "Acme <onboarding@resend.dev>",
-    to: email,
+    to: 'gerardoib@outlook.com',
     subject: 'Verifica tu correo electrónico',
     html: `
       <h2>Verifica tu cuenta</h2>
@@ -23,10 +23,13 @@ export const sendVerificationEmail = async (email, token) => {
   };
 export const sendResetPassword = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/reset-password?token=${token}`;
-
+  try{
   const data = await resend.emails.send({
+    
+      
+    
     from: "Acme <onboarding@resend.dev>",
-    to: email,
+    to: ['gerardoib@outlook.com'],
     subject: 'Restablece tu contraseña',
     html: `
       <h2>Solicitaste restablecer tu contraseña</h2>
@@ -37,5 +40,9 @@ export const sendResetPassword = async (email, token) => {
     `
   });
   console.log('correo enviado : ' + data)
+}catch(e){
+  console.log(e)
+}
+  
 };
 
