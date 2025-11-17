@@ -52,8 +52,6 @@ const CrudProductos = () => {
         const dataProd = await resProd.json();
         const dataIng = await resIng.json();
         
-        console.log('Productos cargados:', dataProd);
-        
         setProductos(dataProd);
         setIngredientes(dataIng);
       } else {
@@ -101,7 +99,6 @@ const CrudProductos = () => {
         const token = localStorage.getItem('access_token');
         
         if (editMode) {
-          // Actualizar producto existente
           const result = await fetch(`https://upacafe.onrender.com/api/orders/updateProduct/${producto.id}`, {
             method: 'PUT',
             headers: {
@@ -118,10 +115,9 @@ const CrudProductos = () => {
               detail: "Producto actualizado", 
               life: 3000 
             });
-            loadData(); // Recargar datos
+            loadData();
           }
         } else {
-          // Crear nuevo producto
           const result = await fetch('https://upacafe.onrender.com/api/orders/createProduct', {
             method: 'POST',
             headers: {
@@ -138,7 +134,7 @@ const CrudProductos = () => {
               detail: "Producto agregado", 
               life: 3000 
             });
-            loadData(); // Recargar datos
+            loadData();
           }
         }
         
@@ -169,6 +165,9 @@ const CrudProductos = () => {
   };
 
   const deleteProducto = async (rowData) => {
+    const confirmDelete = window.confirm(`¿Eliminar el producto "${rowData.nombre}"?`);
+    if (!confirmDelete) return;
+
     try {
       const token = localStorage.getItem('access_token');
       
@@ -231,9 +230,15 @@ const CrudProductos = () => {
   return (
     <div className="crud-productos-container">
       <Toast ref={toast} />
+      
       <div className="header">
         <h2>📦 Gestión de Productos</h2>
-        <Button label="Nuevo Producto" icon="pi pi-plus" onClick={openNew} />
+        <Button 
+          label="Nuevo Producto" 
+          icon="pi pi-plus" 
+          onClick={openNew}
+          className="btn-nuevo-desktop"
+        />
       </div>
 
       <DataTable 
@@ -266,18 +271,31 @@ const CrudProductos = () => {
                 rounded 
                 outlined 
                 onClick={() => editProducto(rowData)} 
+                tooltip="Editar"
+                tooltipOptions={{ position: 'top' }}
               /> 
               <Button 
                 icon="pi pi-trash" 
                 rounded 
                 outlined 
                 severity="danger" 
-                onClick={() => deleteProducto(rowData)} 
+                onClick={() => deleteProducto(rowData)}
+                tooltip="Eliminar"
+                tooltipOptions={{ position: 'top' }}
               /> 
             </div>
           )}
         />
       </DataTable>
+
+      {/* 🆕 Botón flotante para móvil */}
+      <button 
+        className="fab-button" 
+        onClick={openNew}
+        title="Agregar producto"
+      >
+        <i className="pi pi-plus"></i>
+      </button>
 
       <Dialog
         visible={productoDialog}

@@ -49,8 +49,7 @@ const CrudIngredientes = () => {
       let _ingrediente = { ...ingrediente };
 
       if (editMode) {
-        // PUT (actualizar)
-        const result = await fetch(`https://upacafe.onrender.com/orders/ingredientes/${_ingrediente.id}`, {
+        const result = await fetch(`https://upacafe.onrender.com/api/orders/ingredientes/${_ingrediente.id}`, {
           method: "PUT",
           headers: { "Content-Type": "application/json" },
           credentials: "include",
@@ -61,7 +60,6 @@ const CrudIngredientes = () => {
         _ingredientes[index] = _ingrediente;
         toast.current.show({ severity: "success", summary: "Actualizado", detail: "Ingrediente actualizado", life: 3000 });
       } else {
-        // POST (crear)
         const response = await fetch("https://upacafe.onrender.com/api/orders/addIngretes", {
           method: "POST",
           headers: { "Content-Type": "application/json" },
@@ -107,32 +105,79 @@ const CrudIngredientes = () => {
 
   const ingredienteDialogFooter = (
     <>
-      <Button label="Cancelar" icon="pi pi-times" outlined onClick={hideDialog} className="p-button-text" />
-      <Button label={editMode ? "Actualizar" : "Guardar"} icon="pi pi-check" onClick={saveIngrediente} autoFocus />
+      <Button 
+        label="Cancelar" 
+        icon="pi pi-times" 
+        outlined 
+        onClick={hideDialog} 
+        className="p-button-text" 
+      />
+      <Button 
+        label={editMode ? "Actualizar" : "Guardar"} 
+        icon="pi pi-check" 
+        onClick={saveIngrediente} 
+        autoFocus 
+      />
     </>
   );
 
   return (
     <div className="crud-ingredientes-container">
       <Toast ref={toast} />
+      
       <div className="header">
         <h2>🥬 Gestión de Ingredientes</h2>
-        <Button label="Nuevo Ingrediente" icon="pi pi-plus" onClick={openNew} />
+        <Button 
+          label="Nuevo Ingrediente" 
+          icon="pi pi-plus" 
+          onClick={openNew}
+          className="btn-nuevo-desktop"
+        />
       </div>
 
-      <DataTable value={ingredientes} paginator rows={5} responsiveLayout="scroll">
+      <DataTable 
+        value={ingredientes} 
+        paginator 
+        rows={5} 
+        responsiveLayout="scroll"
+        emptyMessage="No hay ingredientes disponibles"
+      >
         <Column field="id" header="ID" style={{ width: "10%" }} sortable />
         <Column field="nombre" header="Nombre" sortable />
         <Column
           header="Acciones"
           body={(rowData) => (
             <div className="acciones">
-              <Button icon="pi pi-pencil" rounded outlined onClick={() => editIngrediente(rowData)} />
-              <Button icon="pi pi-trash" rounded outlined severity="danger" onClick={() => deleteIngrediente(rowData)} />
+              <Button 
+                icon="pi pi-pencil" 
+                rounded 
+                outlined 
+                onClick={() => editIngrediente(rowData)}
+                tooltip="Editar"
+                tooltipOptions={{ position: 'top' }}
+              />
+              <Button 
+                icon="pi pi-trash" 
+                rounded 
+                outlined 
+                severity="danger" 
+                onClick={() => deleteIngrediente(rowData)}
+                tooltip="Eliminar"
+                tooltipOptions={{ position: 'top' }}
+              />
             </div>
           )}
         />
       </DataTable>
+
+      {/* 🆕 Botón flotante para móvil */}
+      <button 
+        className="fab-button" 
+        onClick={openNew}
+        title="Agregar ingrediente"
+      >
+        <i className="pi pi-plus"></i>
+      </button>
 
       <Dialog
         visible={ingredienteDialog}
@@ -143,7 +188,7 @@ const CrudIngredientes = () => {
         onHide={hideDialog}
       >
         <div className="form-field">
-          <label>Nombre</label>
+          <label>Nombre *</label>
           <InputText
             value={ingrediente.nombre}
             onChange={(e) => setIngrediente({ ...ingrediente, nombre: e.target.value })}
@@ -151,6 +196,9 @@ const CrudIngredientes = () => {
             autoFocus
             className={submitted && !ingrediente.nombre ? "p-invalid" : ""}
           />
+          {submitted && !ingrediente.nombre && (
+            <small className="p-error">El nombre es requerido.</small>
+          )}
         </div>
       </Dialog>
     </div>
