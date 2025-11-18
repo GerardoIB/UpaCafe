@@ -4,6 +4,7 @@ import bcrypt from 'bcrypt'
 import crypto from 'crypto'
 import { v4 } from 'uuid';
 import e from 'express';
+import { AvailableAddOnContextImpl } from 'twilio/lib/rest/marketplace/v1/availableAddOn';
 
 
 
@@ -340,6 +341,19 @@ export class ClientsModel {
         } catch (e) {
             console.log(e)
         }
+    }
+    static async updateWorker(id,phone,nombre,email,rol_id)
+    {
+      try {
+          const [result] = await conection.query(
+            'UPDATE usuarios SET nombre = ?,email=?,rol_id= ?, phone=? WHERE id=?',
+            [nombre,email,rol_id,phone,id]
+
+          )
+          return result
+      } catch (error) {
+        console.log(error)
+      }
     }
     /*
    static async createuser({pkPhone,name,firstName,lastName,gender,birthday,password}){

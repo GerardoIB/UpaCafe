@@ -2,6 +2,7 @@ import jwt from "jsonwebtoken";
 import dotenv from "dotenv";
 import { sendVerificationEmail, sendResetPassword } from "../utils/mailer.js";
 import { messager } from "../utils/messager.js";
+import { error } from "qrcode-terminal";
 
 dotenv.config();
 
@@ -448,4 +449,15 @@ export class clientsController {
             return res.status(400).json({ message: 'Invalid or expired token' });
         }
     };
+    updateWorker = async (res,req) => {
+            const id = req.params
+            const {nombre, phone, rol_id, email} = req.body
+            try{
+                const result = await this.ClientsModel.updateWorker(id,phone,nombre,email,rol_id)
+                res.status(200).json({message:"El usuario ha sido actualizado"})
+            }catch(error){
+                res.status(500).json({message:"Algo inesperado ha ocurrido"})
+                console.log(error)
+            }
+    }
 }
