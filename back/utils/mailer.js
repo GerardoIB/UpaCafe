@@ -5,13 +5,13 @@ import { Resend } from 'resend';
 
 
 dotenv.config();
-  const resend = new Resend('re_LFvdEsja_Lv5aJjZhp7DbuBqa4GDyXt9c')
+  const resend = new Resend('re_RiEbEfse_4tDoNpbAq9rd9Roaau5JnwRx')
 
 export const sendVerificationEmail = async (email, token) => {
   const link = `https://upa-cafe.vercel.app/verificar?token=${token}`;
   const data = await resend.emails.send({
-    from: "Acme <onboarding@resend.dev>",
-    to: 'gerardoib@outlook.com',
+    from: "Cafeteria upa <noreply@upacafe.lat>",
+    to: email,
     subject: 'Verifica tu correo electrónico',
     html: `
       <h2>Verifica tu cuenta</h2>
@@ -28,8 +28,8 @@ export const sendResetPassword = async (email, token) => {
     
       
     
-    from: "Acme <onboarding@resend.dev>",
-    to: ['gerardoib@outlook.com'],
+    from: "Cafeteria upa <noreply@upacafe.lat>",
+    to: [email],
     subject: 'Restablece tu contraseña',
     html: `
       <h2>Solicitaste restablecer tu contraseña</h2>
