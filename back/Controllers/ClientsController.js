@@ -449,7 +449,7 @@ export class clientsController {
             return res.status(400).json({ message: 'Invalid or expired token' });
         }
     };
-    updateWorker = async (res,req) => {
+    updateWorker = async (req,res) => {
             const id = req.params
             const {nombre, phone, rol_id, email} = req.body
             try{
