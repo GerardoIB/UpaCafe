@@ -303,8 +303,7 @@ export class clientsController {
             
             return res.status(201).json({
                 message: 'Worker created successfully',
-                userId: newUser.id,
-                verificationToken: newUser.token
+                userId: newUser.id
             });
 
         } catch (error) {
@@ -449,10 +448,11 @@ export class clientsController {
         }
     };
     updateWorker = async (req,res) => {
-            const id = req.params
+            const {id} = req.params
             const {nombre, phone, rol_id, email} = req.body
             try{
                 const result = await this.ClientsModel.updateWorker(id,phone,nombre,email,rol_id)
+                console.log(req.body)
                 console.log(result)
                 res.status(200).json({message:"El usuario ha sido actualizado"})
             }catch(error){
