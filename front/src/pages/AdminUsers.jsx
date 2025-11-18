@@ -1,4 +1,16 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
+import { DataTable } from 'primereact/datatable';
+import { Column } from 'primereact/column';
+import { InputText } from 'primereact/inputtext';
+import { Button } from 'primereact/button';
+import { Dialog } from 'primereact/dialog';
+import { Dropdown } from 'primereact/dropdown';
+import { Tag } from 'primereact/tag';
+import { Toast } from 'primereact/toast';
+import { ConfirmDialog, confirmDialog } from 'primereact/confirmdialog';
+import { Card } from 'primereact/card';
+import { Avatar } from 'primereact/avatar';
+import { Skeleton } from 'primereact/skeleton';
 import './AdminUsers.css';
 
 const AdminUsers = () => {
@@ -6,10 +18,23 @@ const AdminUsers = () => {
   const [loading, setLoading] = useState(true);
   const [selectedUser, setSelectedUser] = useState(null);
   const [showModal, setShowModal] = useState(false);
-  const [errors, setErrors] = useState({});
+  const [globalFilter, setGlobalFilter] = useState('');
+  const [roleFilter, setRoleFilter] = useState(null);
+  const toast = useRef(null);
 
-  // 🔹 Cargar usuarios
+  // Opciones para el filtro de roles
+  const roleOptions = [
+    { label: 'Todos', value: null },
+    { label: 'Administradores', value: 1 },
+    { label: 'Trabajadores', value: 2 }
+  ];
+
   useEffect(() => {
+    loadUsers();
+  }, []);
+
+  const loadUsers = () => {
+    setLoading(true);
     fetch('https://upacafe.onrender.com/api/user/getAdmins', {
       method: 'GET',
       credentials: 'include',
@@ -19,172 +44,402 @@ const AdminUsers = () => {
         setUsers(data);
         setLoading(false);
       })
-      .catch(err => console.error('Error cargando usuarios:', err));
-  }, []);
-
-  // 🔹 Validaciones
-  const validate = (user) => {
-    const newErrors = {};
-    if (!user.nombre?.trim()) newErrors.nombre = 'El nombre es obligatorio';
-    if (!user.email?.trim()) {
-      newErrors.email = 'El correo es obligatorio';
-    } else if (!/^[\w-.]+@([\w-]+\.)+[\w-]{2,4}$/.test(user.email)) {
-      newErrors.email = 'Correo inválido';
-    }
-    if (!user.phone?.trim()) {
-      newErrors.phone = 'El teléfono es obligatorio';
-    } else if (!/^\d{10}$/.test(user.phone)) {
-      newErrors.phone = 'El teléfono debe tener 10 dígitos';
-    }
-    if (!user.rol) newErrors.rol = 'Selecciona un rol';
-    return newErrors;
+      .catch(err => {
+        console.error('Error cargando usuarios:', err);
+        toast.current.show({
+          severity: 'error',
+          summary: 'Error',
+          detail: 'No se pudieron cargar los usuarios',
+          life: 3000
+        });
+        setLoading(false);
+      });
   };
 
-  // 🔹 Abrir modal
-  const handleUpdate = (user) => {
+  // Filtrar usuarios
+  const filteredUsers = users.filter(user => {
+    const matchesRole = roleFilter === null || user.rol_id === roleFilter;
+    return matchesRole;
+  });
+
+  // Abrir modal de edición
+  const openEditDialog = (user) => {
     setSelectedUser({ ...user });
-    setErrors({});
     setShowModal(true);
   };
 
-  // 🔹 Guardar cambios
-  const handleSave = async () => {
-    const validationErrors = validate(selectedUser);
-    setErrors(validationErrors);
-
-    if (Object.keys(validationErrors).length > 0) return; // 🚫 No enviar si hay errores
+  // Guardar cambios
+  const saveUser = async () => {
+    if (!selectedUser.nombre?.trim() || !selectedUser.email?.trim() || !selectedUser.phone?.trim()) {
+      toast.current.show({
+        severity: 'warn',
+        summary: 'Campos incompletos',
+        detail: 'Por favor completa todos los campos',
+        life: 3000
+      });
+      return;
+    }
 
     try {
-      const res = await fetch(`https://upacafe.onrender.com/api/users/${selectedUser.id}`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/user/${selectedUser.id}`, {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json' },
         credentials: 'include',
         body: JSON.stringify(selectedUser),
       });
 
-      if (!res.ok) throw new Error('Error al actualizar el usuario');
+      if (!res.ok) throw new Error('Error al actualizar');
 
       setUsers(users.map(u => (u.id === selectedUser.id ? selectedUser : u)));
       setShowModal(false);
-      alert('✅ Usuario actualizado correctamente');
+      toast.current.show({
+        severity: 'success',
+        summary: 'Éxito',
+        detail: 'Usuario actualizado correctamente',
+        life: 3000
+      });
     } catch (error) {
       console.error(error);
-      alert('❌ No se pudo actualizar el usuario');
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo actualizar el usuario',
+        life: 3000
+      });
     }
   };
 
-  // 🔹 Eliminar usuario
-  const handleDelete = async (id) => {
-    if (!window.confirm('¿Seguro que deseas eliminar este usuario?')) return;
+  // Confirmar eliminación
+  const confirmDelete = (user) => {
+    confirmDialog({
+      message: `¿Estás seguro de eliminar a ${user.nombre}?`,
+      header: 'Confirmar eliminación',
+      icon: 'pi pi-exclamation-triangle',
+      acceptLabel: 'Sí, eliminar',
+      rejectLabel: 'Cancelar',
+      acceptClassName: 'p-button-danger',
+      accept: () => deleteUser(user.id)
+    });
+  };
+
+  // Eliminar usuario
+  const deleteUser = async (id) => {
     try {
-      const res = await fetch(`https://upacafe.onrender.com/api/users/${id}`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/user/deleteAdmin/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
+
       if (res.ok) {
         setUsers(users.filter(u => u.id !== id));
-      } else {
-        alert('Error eliminando el usuario');
+        toast.current.show({
+          severity: 'success',
+          summary: 'Eliminado',
+          detail: 'Usuario eliminado correctamente',
+          life: 3000
+        });
       }
     } catch (error) {
-      console.error('Error:', error);
+      console.error(error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo eliminar el usuario',
+        life: 3000
+      });
     }
   };
 
-  if (loading) return <p>Cargando usuarios...</p>;
+  // Templates para las columnas
+
+  const userBodyTemplate = (rowData) => {
+    return (
+      <div className="user-cell">
+        <Avatar 
+          label={rowData.nombre.charAt(0).toUpperCase()} 
+          className="user-avatar-table"
+          style={{ 
+            backgroundColor: rowData.rol_id === 1 ? '#4caf50' : '#ff9800',
+            color: 'white'
+          }}
+          shape="circle" 
+        />
+        <div className="user-cell-info">
+          <span className="user-cell-name">{rowData.nombre}</span>
+          <span className="user-cell-id">ID: {rowData.id}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const contactBodyTemplate = (rowData) => {
+    return (
+      <div className="contact-cell">
+        <div className="contact-item">
+          <i className="pi pi-envelope"></i>
+          <span>{rowData.email}</span>
+        </div>
+        <div className="contact-item">
+          <i className="pi pi-phone"></i>
+          <span>{rowData.phone}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const roleBodyTemplate = (rowData) => {
+    return (
+      <Tag 
+        value={rowData.rol_id === 1 ? 'Administrador' : 'Trabajador'}
+        severity={rowData.rol_id === 1 ? 'success' : 'warning'}
+        icon={rowData.rol_id === 1 ? 'pi pi-shield' : 'pi pi-user'}
+      />
+    );
+  };
+
+  const actionsBodyTemplate = (rowData) => {
+    return (
+      <div className="action-buttons-table">
+        <Button
+          icon="pi pi-pencil"
+          rounded
+          outlined
+          className="p-button-info"
+          onClick={() => openEditDialog(rowData)}
+          tooltip="Editar"
+          tooltipOptions={{ position: 'top' }}
+        />
+        <Button
+          icon="pi pi-trash"
+          rounded
+          outlined
+          severity="danger"
+          onClick={() => confirmDelete(rowData)}
+          tooltip="Eliminar"
+          tooltipOptions={{ position: 'top' }}
+        />
+      </div>
+    );
+  };
+
+  // Header de la tabla
+  const header = (
+    <div className="table-header">
+      <div className="header-left">
+        <h2>👨‍💼 Gestión de Usuarios</h2>
+      </div>
+      <div className="header-right">
+        <span className="p-input-icon-left search-input">
+          <i className="pi pi-search" />
+          <InputText
+            value={globalFilter}
+            onChange={(e) => setGlobalFilter(e.target.value)}
+            placeholder="Buscar usuarios..."
+          />
+        </span>
+        <Dropdown
+          value={roleFilter}
+          options={roleOptions}
+          onChange={(e) => setRoleFilter(e.value)}
+          placeholder="Filtrar por rol"
+          className="role-filter-dropdown"
+        />
+        <Button
+          icon="pi pi-refresh"
+          rounded
+          outlined
+          onClick={loadUsers}
+          tooltip="Actualizar"
+          tooltipOptions={{ position: 'top' }}
+        />
+      </div>
+    </div>
+  );
+
+  // Footer del modal
+  const dialogFooter = (
+    <div className="modal-footer-buttons">
+      <Button
+        label="Cancelar"
+        icon="pi pi-times"
+        outlined
+        onClick={() => setShowModal(false)}
+        className="p-button-secondary"
+      />
+      <Button
+        label="Guardar"
+        icon="pi pi-check"
+        onClick={saveUser}
+        autoFocus
+      />
+    </div>
+  );
+
+  // Loading skeleton
+  const loadingTemplate = () => {
+    return (
+      <div className="loading-skeleton">
+        {[1, 2, 3, 4, 5].map((i) => (
+          <div key={i} className="skeleton-row">
+            <Skeleton width="100%" height="60px" />
+          </div>
+        ))}
+      </div>
+    );
+  };
 
   return (
-    <div className="admin-users-container">
-      <h1>👨‍💼 Gestión de Empleados y Administradores</h1>
-      <table className="admin-table">
-        <thead>
-          <tr>
-            <th>ID</th>
-            <th>Nombre</th>
-            <th>Correo</th>
-            <th>Teléfono</th>
-            <th>Rol</th>
-            <th>Acciones</th>
-          </tr>
-        </thead>
-        <tbody>
-          {users.map(user => (
-            <tr key={user.id}>
-              <td>{user.id}</td>
-              <td>{user.nombre}</td>
-              <td>{user.email}</td>
-              <td>{user.phone}</td>
-              <td>
-                <span className={`badge ${user.rol_id === 1 ? 'badge-admin' : 'badge-worker'}`}>
-                  {user.rol_id === 1 ? 'administrador' : 'trabajador'}
-                </span>
-              </td>
-              <td>
-                <button className="btn-update" onClick={() => handleUpdate(user)}>
-                  ✏️ Editar
-                </button>
-                <button className="btn-delete" onClick={() => handleDelete(user.id)}>
-                  🗑️ Eliminar
-                </button>
-              </td>
-            </tr>
-          ))}
-          {users.length === 0 && (
-            <tr>
-              <td colSpan="6" className="no-data">No hay usuarios registrados</td>
-            </tr>
-          )}
-        </tbody>
-      </table>
+    <div className="admin-users-container-prime">
+      <Toast ref={toast} />
+      <ConfirmDialog />
 
-      {/* 🔹 Modal de edición con validaciones */}
-      {showModal && selectedUser && (
-        <div className="modal-overlay">
-          <div className="modal">
-            <h2>Editar Usuario</h2>
-
-            <label>Nombre:</label>
-            <input
-              type="text"
-              value={selectedUser.nombre}
-              onChange={(e) => setSelectedUser({ ...selectedUser, nombre: e.target.value })}
-            />
-            {errors.nombre && <span className="error-text">{errors.nombre}</span>}
-
-            <label>Email:</label>
-            <input
-              type="email"
-              value={selectedUser.email}
-              onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
-            />
-            {errors.email && <span className="error-text">{errors.email}</span>}
-
-            <label>Teléfono:</label>
-            <input
-              type="text"
-              value={selectedUser.phone}
-              onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })}
-            />
-            {errors.phone && <span className="error-text">{errors.phone}</span>}
-
-            <label>Rol:</label>
-            <select
-              value={selectedUser.rol}
-              onChange={(e) => setSelectedUser({ ...selectedUser, rol: e.target.value })}
-            >
-              <option value="">Selecciona un rol</option>
-              <option value="administrador">Administrador</option>
-              <option value="trabajador">Trabajador</option>
-            </select>
-            {errors.rol && <span className="error-text">{errors.rol}</span>}
-
-            <div className="modal-buttons">
-              <button className="btn-save" onClick={handleSave}>💾 Guardar</button>
-              <button className="btn-cancel" onClick={() => setShowModal(false)}>❌ Cancelar</button>
+      {/* Estadísticas */}
+      <div className="stats-grid">
+        <Card className="stat-card-prime">
+          <div className="stat-content">
+            <div className="stat-icon total">
+              <i className="pi pi-users"></i>
+            </div>
+            <div className="stat-info-prime">
+              <span className="stat-value">{users.length}</span>
+              <span className="stat-label">Total Usuarios</span>
             </div>
           </div>
-        </div>
-      )}
+        </Card>
+
+        <Card className="stat-card-prime">
+          <div className="stat-content">
+            <div className="stat-icon admin">
+              <i className="pi pi-shield"></i>
+            </div>
+            <div className="stat-info-prime">
+              <span className="stat-value">
+                {users.filter(u => u.rol_id === 1).length}
+              </span>
+              <span className="stat-label">Administradores</span>
+            </div>
+          </div>
+        </Card>
+
+        <Card className="stat-card-prime">
+          <div className="stat-content">
+            <div className="stat-icon worker">
+              <i className="pi pi-user"></i>
+            </div>
+            <div className="stat-info-prime">
+              <span className="stat-value">
+                {users.filter(u => u.rol_id === 2).length}
+              </span>
+              <span className="stat-label">Trabajadores</span>
+            </div>
+          </div>
+        </Card>
+      </div>
+
+      {/* Tabla */}
+      <Card className="table-card">
+        <DataTable
+          value={filteredUsers}
+          paginator
+          rows={10}
+          loading={loading}
+          globalFilter={globalFilter}
+          header={header}
+          emptyMessage="No se encontraron usuarios"
+          responsiveLayout="scroll"
+          stripedRows
+          rowHover
+          dataKey="id"
+        >
+          <Column 
+            field="nombre" 
+            header="Usuario" 
+            body={userBodyTemplate}
+            sortable
+          />
+          <Column 
+            field="email" 
+            header="Contacto" 
+            body={contactBodyTemplate}
+          />
+          <Column 
+            field="rol_id" 
+            header="Rol" 
+            body={roleBodyTemplate}
+            sortable
+          />
+          <Column 
+            header="Acciones" 
+            body={actionsBodyTemplate}
+            style={{ width: '120px', textAlign: 'center' }}
+          />
+        </DataTable>
+      </Card>
+
+      {/* Modal de edición */}
+      <Dialog
+        visible={showModal}
+        style={{ width: '450px' }}
+        header="Editar Usuario"
+        modal
+        footer={dialogFooter}
+        onHide={() => setShowModal(false)}
+        draggable={false}
+        resizable={false}
+      >
+        {selectedUser && (
+          <div className="edit-form">
+            <div className="form-field-prime">
+              <label htmlFor="nombre">Nombre completo *</label>
+              <InputText
+                id="nombre"
+                value={selectedUser.nombre}
+                onChange={(e) => setSelectedUser({ ...selectedUser, nombre: e.target.value })}
+                placeholder="Juan Pérez"
+                className="w-full"
+              />
+            </div>
+
+            <div className="form-field-prime">
+              <label htmlFor="email">Correo electrónico *</label>
+              <InputText
+                id="email"
+                value={selectedUser.email}
+                onChange={(e) => setSelectedUser({ ...selectedUser, email: e.target.value })}
+                placeholder="correo@ejemplo.com"
+                className="w-full"
+              />
+            </div>
+
+            <div className="form-field-prime">
+              <label htmlFor="phone">Teléfono *</label>
+              <InputText
+                id="phone"
+                value={selectedUser.phone}
+                onChange={(e) => setSelectedUser({ ...selectedUser, phone: e.target.value })}
+                placeholder="1234567890"
+                maxLength="10"
+                className="w-full"
+              />
+            </div>
+
+            <div className="form-field-prime">
+              <label htmlFor="rol">Rol del usuario *</label>
+              <Dropdown
+                id="rol"
+                value={selectedUser.rol_id}
+                options={[
+                  { label: 'Administrador', value: 1 },
+                  { label: 'Trabajador', value: 2 }
+                ]}
+                onChange={(e) => setSelectedUser({ ...selectedUser, rol_id: e.value })}
+                placeholder="Selecciona un rol"
+                className="w-full"
+              />
+            </div>
+          </div>
+        )}
+      </Dialog>
     </div>
   );
 };

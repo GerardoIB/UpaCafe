@@ -10,7 +10,7 @@ import "./CrudIngredientes.css";
 const CrudIngredientes = () => {
   const [ingredientes, setIngredientes] = useState([]);
   const [ingredienteDialog, setIngredienteDialog] = useState(false);
-  const [ingrediente, setIngrediente] = useState({ nombre: "" });
+  const [ingrediente, setIngrediente] = useState({name: "" });
   const [submitted, setSubmitted] = useState(false);
   const [editMode, setEditMode] = useState(false);
   const toast = useRef(null);
@@ -31,7 +31,7 @@ const CrudIngredientes = () => {
   }, []);
 
   const openNew = () => {
-    setIngrediente({ nombre: "" });
+    setIngrediente({ name: "" });
     setSubmitted(false);
     setEditMode(false);
     setIngredienteDialog(true);
@@ -44,7 +44,7 @@ const CrudIngredientes = () => {
 
   const saveIngrediente = async () => {
     setSubmitted(true);
-    if (ingrediente.nombre.trim()) {
+    if (ingrediente.name.trim()) {
       let _ingredientes = [...ingredientes];
       let _ingrediente = { ...ingrediente };
 
@@ -73,7 +73,7 @@ const CrudIngredientes = () => {
 
       setIngredientes(_ingredientes);
       setIngredienteDialog(false);
-      setIngrediente({ nombre: "" });
+      setIngrediente({ name: "" });
     }
   };
 
@@ -190,13 +190,13 @@ const CrudIngredientes = () => {
         <div className="form-field">
           <label>Nombre *</label>
           <InputText
-            value={ingrediente.nombre}
-            onChange={(e) => setIngrediente({ ...ingrediente, nombre: e.target.value })}
+            value={ingrediente.name}
+            onChange={(e) => setIngrediente({ ...ingrediente, name: e.target.value })}
             required
             autoFocus
-            className={submitted && !ingrediente.nombre ? "p-invalid" : ""}
+            className={submitted && !ingrediente.name ? "p-invalid" : ""}
           />
-          {submitted && !ingrediente.nombre && (
+          {submitted && !ingrediente.name && (
             <small className="p-error">El nombre es requerido.</small>
           )}
         </div>

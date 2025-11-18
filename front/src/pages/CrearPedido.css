@@ -1,239 +1,244 @@
-/* 🌿 Paleta de colores */
-:root {
-  --verde-oscuro: #2e7d32;
-  --verde-claro: #66bb6a;
-  --verde-oliva: #3e6b48;
-  --crema: #f9fff6;
-  --blanco: #ffffff;
-  --gris-claro: #e0e0e0;
-  --gris-texto: #444;
-  --sombra-suave: rgba(0, 0, 0, 0.08);
-}
-
-/* 🧩 Contenedor principal */
-.crear-pedido-container {
-  margin-left: 240px;
-  padding: 40px;
-  background: linear-gradient(135deg, #f1f8e9, #ffffff);
-  min-height: 100vh;
-  font-family: "Poppins", sans-serif;
-  transition: background 0.3s ease-in-out;
-}
-
-.crear-pedido-container h2 {
-  color: var(--verde-oscuro);
-  display: flex;
-  align-items: center;
-  gap: 12px;
-  font-size: 2rem;
-  margin-bottom: 25px;
-  font-weight: 700;
-  letter-spacing: 0.5px;
-}
-
-/* 📝 Formulario */
-.pedido-form {
-  background: var(--blanco);
-  padding: 30px 35px;
-  border-radius: 16px;
-  max-width: 580px;
+/* ===========================================
+     CONTENEDOR GENERAL
+=========================================== */
+.crear-pedido-container-prime {
+  padding: 30px;
+  background: linear-gradient(135deg, #f7fdf9 0%, #e8f5e9 100%);
+  min-height: calc(100vh - 60px);
+  max-width: 900px;
   margin: 0 auto;
-  box-shadow: 0 6px 20px var(--sombra-suave);
-  display: flex;
-  flex-direction: column;
-  transition: transform 0.2s ease-in-out;
 }
 
-.pedido-form:hover {
-  transform: translateY(-2px);
+/* ===========================================
+     HEADER
+=========================================== */
+.page-header-pedido {
+  text-align: center;
+  margin-bottom: 35px;
+  animation: fadeIn 0.5s ease;
 }
 
-/* Label */
-.pedido-form label {
-  margin-top: 18px;
-  color: var(--verde-oliva);
-  font-weight: 600;
-  font-size: 0.95rem;
-}
-
-/* Inputs y select con íconos */
-.input-icon {
-  display: flex;
-  align-items: center;
-  background: var(--blanco);
-  border: 1.5px solid var(--verde-claro);
-  border-radius: 10px;
-  padding: 8px 12px;
-  margin-top: 6px;
-  box-shadow: 0 2px 6px var(--sombra-suave);
-  transition: all 0.3s ease;
-}
-
-.input-icon:hover,
-.input-icon:focus-within {
-  border-color: var(--verde-oscuro);
-  box-shadow: 0 4px 10px rgba(46, 125, 50, 0.15);
-}
-
-.input-icon svg {
-  font-size: 1.2rem;
-  color: var(--verde-oscuro);
-  margin-right: 10px;
-  flex-shrink: 0;
-}
-
-.input-icon select,
-.input-icon input,
-.input-icon textarea {
-  border: none;
-  width: 100%;
-  padding: 8px;
-  font-size: 1rem;
-  outline: none;
-  background: transparent;
-  color: var(--gris-texto);
-}
-
-textarea {
-  resize: none;
-  height: 90px;
-  line-height: 1.4;
-}
-
-/* 🧂 Ingredientes */
-.ingredientes-section {
-  margin-top: 18px;
-  padding: 12px 15px;
-  background: var(--crema);
-  border-radius: 10px;
-  border: 1px solid var(--verde-claro);
-  box-shadow: 0 2px 8px var(--sombra-suave);
-}
-
-.ingredientes-section label {
-  color: var(--verde-oscuro);
-  font-weight: 600;
-}
-
-.ingredientes-list {
-  margin-top: 10px;
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-  gap: 6px;
-}
-
-.ingrediente-item {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-  background: var(--blanco);
-  padding: 6px 10px;
-  border-radius: 8px;
-  border: 1px solid var(--gris-claro);
-  transition: all 0.2s ease-in-out;
-  cursor: pointer;
-}
-
-.ingrediente-item:hover {
-  background: var(--verde-claro);
-  color: white;
-  border-color: var(--verde-oscuro);
-}
-
-.ingrediente-item input {
-  accent-color: var(--verde-oscuro);
-}
-
-/* ➕ Botones */
-.btn-add {
-  margin-top: 20px;
-  background: var(--verde-claro);
-  color: white;
-  font-weight: 600;
-  border: none;
-  border-radius: 10px;
-  padding: 10px 15px;
-  cursor: pointer;
-  font-size: 0.95rem;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 8px;
-  box-shadow: 0 3px 8px var(--sombra-suave);
-  transition: all 0.3s ease-in-out;
-}
-
-.btn-add:hover {
-  background: var(--verde-oscuro);
-  transform: translateY(-1px);
-}
-
-.btn-submit {
-  margin-top: 25px;
-  padding: 14px;
-  background: linear-gradient(90deg, var(--verde-oscuro), var(--verde-claro));
-  color: white;
+.page-header-pedido h1 {
+  color: #2e7d32;
+  font-size: 2.4rem;
   font-weight: 700;
-  border: none;
-  border-radius: 12px;
-  cursor: pointer;
-  font-size: 1rem;
+  margin-bottom: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
-  gap: 10px;
-  box-shadow: 0 6px 14px rgba(102, 187, 106, 0.4);
-  transition: all 0.3s ease;
+  gap: 12px;
 }
 
-.btn-submit:hover {
-  background: linear-gradient(90deg, var(--verde-claro), var(--verde-oscuro));
-  transform: translateY(-1px);
+.page-header-pedido h1 i {
+  font-size: 2.4rem;
 }
 
-/* 🗑 Botón eliminar producto */
-.btn-delete {
-  background: transparent;
-  border: none;
-  color: #d32f2f;
-  cursor: pointer;
-  margin-left: 8px;
-  transition: transform 0.2s ease;
+.page-header-pedido .subtitle {
+  color: #666;
+  font-size: 1.1rem;
 }
 
-.btn-delete:hover {
-  transform: scale(1.2);
-  color: #b71c1c;
+/* ===========================================
+     PRODUCTO CARD
+=========================================== */
+.producto-card {
+  background: white !important;
+  border-radius: 16px !important;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
+  border: none !important;
+  margin-bottom: 25px;
+  animation: slideIn 0.35s ease;
+  transition: all 0.25s ease;
 }
 
-/* 📦 Producto item */
-.producto-item {
-  background: #fafafa;
-  padding: 20px;
-  border-radius: 12px;
-  box-shadow: 0 2px 6px var(--sombra-suave);
-  margin-bottom: 20px;
-  border-left: 4px solid var(--verde-claro);
-  transition: transform 0.2s ease-in-out;
-}
-
-.producto-item:hover {
+.producto-card:hover {
   transform: translateY(-3px);
+  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1) !important;
 }
 
-/* 📱 Responsive */
+.producto-card .p-card-body {
+  padding: 25px !important;
+}
+
+/* ===========================================
+     HEADER DEL PRODUCTO
+=========================================== */
+.producto-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 10px;
+}
+
+.producto-header h3 {
+  color: #2e7d32;
+  font-size: 1.25rem;
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 0;
+}
+
+/* ===========================================
+     CAMPOS
+=========================================== */
+.field-section {
+  margin-bottom: 22px;
+}
+
+.field-label {
+  font-weight: 600;
+  color: #333;
+  margin-bottom: 10px;
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+
+.field-label i {
+  color: #2e7d32;
+}
+
+/* ===========================================
+     INGREDIENTES GRID
+=========================================== */
+.ingredientes-section-prime {
+  background: #f3faf4;
+  padding: 17px;
+  border-radius: 12px;
+  border: 2px solid rgba(46, 125, 50, 0.1);
+}
+
+.ingredientes-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 12px;
+}
+
+.ingrediente-checkbox {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px;
+  border-radius: 8px;
+  background: white;
+  border: 2px solid #e0e0e0;
+  cursor: pointer;
+  transition: 0.25s;
+}
+
+.ingrediente-checkbox:hover {
+  border-color: #66bb6a;
+}
+
+.ingrediente-checkbox label.ingrediente-quitado {
+  text-decoration: line-through;
+  color: #d32f2f;
+}
+
+/* ===========================================
+     RESUMEN DEL PRODUCTO
+=========================================== */
+.producto-resumen {
+  background: #fff3e0;
+  padding: 15px;
+  border-radius: 8px;
+  margin-top: 15px;
+  border-left: 4px solid #ff9800;
+}
+
+/* ===========================================
+     BOTONES
+=========================================== */
+.actions-container {
+  display: flex;
+  gap: 15px;
+  margin-top: 25px;
+  flex-wrap: wrap;
+}
+
+.actions-container .p-button {
+  flex: 1;
+  min-width: 200px;
+}
+
+/* ===========================================
+     ANIMACIONES
+=========================================== */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    translate: 0 -10px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+@keyframes slideIn {
+  from {
+    opacity: 0;
+    translate: 0 20px;
+  }
+  to {
+    opacity: 1;
+    translate: 0 0;
+  }
+}
+
+/* ===========================================
+     RESPONSIVO
+=========================================== */
 @media (max-width: 768px) {
-  .crear-pedido-container {
-    margin-left: 0;
-    padding: 20px;
+  .crear-pedido-container-prime {
+    padding: 20px 12px;
   }
 
-  .pedido-form {
-    width: 100%;
-    padding: 20px;
+  .page-header-pedido h1 {
+    font-size: 1.7rem;
+    flex-direction: column;
+    gap: 5px;
   }
 
-  .ingredientes-list {
-    grid-template-columns: repeat(auto-fit, minmax(120px, 1fr));
+  .producto-card .p-card-body {
+    padding: 18px !important;
+  }
+
+  .ingredientes-grid {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  }
+
+  .actions-container {
+    flex-direction: column;
+  }
+}
+
+@media (max-width: 480px) {
+  .page-header-pedido h1 {
+    font-size: 1.5rem;
+  }
+
+  .producto-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 8px;
+  }
+
+  .ingredientes-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .actions-container .p-button {
+    min-width: 100%;
+  }
+}
+.precio-tag {
+  font-size: .9rem !important;
+}
+@media (max-width:480px){
+  .precio-tag{
+    font-size:.8rem !important;
+    padding:6px 10px !important;
   }
 }

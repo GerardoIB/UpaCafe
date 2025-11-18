@@ -6,6 +6,8 @@ import "primereact/resources/themes/lara-light-blue/theme.css"; // 👈 o cualqu
 import "primereact/resources/primereact.min.css";
 import "primeicons/primeicons.css";
 
+
+
 import App from './App.jsx'
 
 createRoot(document.getElementById('root')).render(
