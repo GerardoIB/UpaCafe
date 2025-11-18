@@ -25,7 +25,7 @@ app.use(express.json())
 app.use('/api/orders', createRouterOrders({ordersModel,io}))
 app.use('/api/user',createRouter({ClientsModel,io}))
 
-        whatsapp.initialize()        
+           
 
 
 const PORT = process.env.PORT ?? 3000;
