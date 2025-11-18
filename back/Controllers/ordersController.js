@@ -16,7 +16,7 @@ export class OrdersController {
             if (!nombre || !descripcion || !precio) {
                 return res.status(400).json({ message: 'Todos los campos son obligatorios' });
             }
-
+                console.log(nombre)
             // 1️⃣ Crear producto
             const newProduct = await this.ordersModel.createProducto({
                 nombre,
