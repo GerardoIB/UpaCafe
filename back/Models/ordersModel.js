@@ -14,10 +14,10 @@ const connectionString = process.env.DATABSE_URL ?? DEFAULT_CONF
 const conection = await mysql.createConnection(connectionString);
 
 export class ordersModel {
-    static async createProducto({ name, description, price, disponible }) {
+    static async createProducto({ nombre, descripcion, precio, disponible }) {
         const [result] = await conection.query(
             `INSERT INTO productos (nombre,descripcion,precio,disponible) VALUES (?,?,?,?)`,
-            [name, description, price, disponible]
+            [nombre, descripcion, precio, disponible]
         );
         return result;
     }
