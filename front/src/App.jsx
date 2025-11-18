@@ -110,24 +110,40 @@ function AppContent() {
   }, []);
 
   const handleLogout = async () => {
-    try {
-      const res = await fetch('https://upacafe.onrender.com/api/user/logout', {
-        method: 'POST',
-        credentials: 'include'
-      });
+  try {
+    // 1️⃣ Llamar al endpoint de logout
+    const res = await fetch('https://upacafe.onrender.com/api/user/logout', {
+      method: 'POST',
+      credentials: 'include'
+    });
+    
+    if (res.ok) {
+      // 2️⃣ Limpiar localStorage
+      localStorage.removeItem('access_token');
+      localStorage.removeItem('user')
       
-      if (res.ok) {
-        setIsAuthenticated(false);
-        setUser(null);
-        navigate('/');
-      }
-    } catch (error) {
-      console.error('Error en logout:', error);
+      // 3️⃣ Limpiar estado de la aplicación
       setIsAuthenticated(false);
       setUser(null);
+      setId(null);
+      
+      // 4️⃣ Redirigir al login
       navigate('/');
+    } else {
+      // Si el servidor falla, igual hacer logout local
+      throw new Error('Server logout failed');
     }
-  };
+  } catch (error) {
+    console.error('Error en logout:', error);
+    
+    // 🔥 IMPORTANTE: Siempre hacer logout local aunque falle el servidor
+    localStorage.removeItem('access_token');
+    setIsAuthenticated(false);
+    setUser(null);
+    setId(null);
+    navigate('/');
+  }
+};
 
   if (loading) {
     return (

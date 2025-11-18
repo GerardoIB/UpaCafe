@@ -136,16 +136,30 @@ export class clientsController {
     }
 
     logout = (req, res) => {
-        // Limpiar cookie (desktop)
+    try {
+        // 1️⃣ Limpiar cookie (desktop)
         res.clearCookie('access_token', {
             httpOnly: true,
             secure: true,
-            sameSite: 'none'
+            sameSite: 'none',
+            path: '/' // 🆕 Asegurar que limpia desde la raíz
         });
         
-        // Frontend limpiará localStorage (móvil)
-        res.status(200).json({ message: 'Logout successful' });
+        console.log('✅ Cookie cleared successfully');
+        
+        // 2️⃣ El frontend limpiará localStorage (móvil)
+        res.status(200).json({ 
+            message: 'Logout successful',
+            success: true 
+        });
+    } catch (error) {
+        console.error('❌ Error in logout:', error);
+        res.status(500).json({ 
+            message: 'Logout failed',
+            success: false 
+        });
     }
+}
 
     deleteWorker = async (req, res) => {
         try {
