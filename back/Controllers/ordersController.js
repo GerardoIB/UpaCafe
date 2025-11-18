@@ -10,18 +10,18 @@ export class OrdersController {
 
     createProducto = async (req, res) => {
         try {
-            const { name, description, price, disponible, ingredientes } = req.body;
+            const { nombre, descripcion, precio, disponible, ingredientes } = req.body;
             console.log(req.body)
 
-            if (!name || !description || !price) {
+            if (!nombre || !descripcion || !precio) {
                 return res.status(400).json({ message: 'Todos los campos son obligatorios' });
             }
 
             // 1️⃣ Crear producto
             const newProduct = await this.ordersModel.createProducto({
-                name,
-                description,
-                price,
+                nombre,
+                descripcion,
+                precio,
                 disponible
             });
 
