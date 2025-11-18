@@ -24,6 +24,7 @@ export const createRouter = ({ClientsModel,io})=>{
     userRouter.get('/readNotifiactions/:id', userController.updateStatusNot)
     userRouter.post('/forgotPassword',userController.forgotPassword)
     userRouter.patch('/reset-password', userController.resetPassword)
+    userRouter.put('/:id',userController.updateWorker)
 
     /*
    userRouter.post('/register', userController.create)
