@@ -115,17 +115,16 @@ export class ClientsModel {
     );
     return result;
   }
-  static async createWorker({ email, password, name, rol, phone }) {
+  static async createWorker({ email, password, name, rol_id, phone }) {
     const passwordHashed = await bcrypt.hash(password, 10);
     const token = crypto.randomBytes(32).toString('hex');
     const smsCode = Math.floor(100000 + Math.random() * 900000); // 6 dígitos
     const expiration = new Date(Date.now() + 1000 * 60 * 60); // 1 hora
-    rol = 2
     const [result] = await conection.query(
 
       `INSERT INTO usuarios (nombre, email, password, rol_id, phone, token_verificacion, codigo_sms, fecha_expiracion_token)
      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
-      [name, email, passwordHashed, rol, phone, token, smsCode, expiration]
+      [name, email, passwordHashed, rol_id, phone, token, smsCode, expiration]
     );
     return { id: result.insertId, email, token, smsCode };
   }

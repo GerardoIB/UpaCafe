@@ -286,20 +286,19 @@ export class clientsController {
 
     createWorker = async (req, res) => {
         try {
-            const { email, password, name, phone } = req.body;
+            const { email, password, name, phone, rol_id } = req.body;
             
-            if (!email || !password || !name || !phone) {
+            if (!email || !password || !name || !phone || !rol_id) {
                 return res.status(400).json({ message: 'All fields are required' });
             }
-            
-            const rol = 2;
+           
             const validateEmail = await this.ClientsModel.validateEmail(email);
             
             if (validateEmail) {
                 return res.status(400).json({ message: 'This email has been registered' });
             }
             
-            const newUser = await this.ClientsModel.createWorker({ email, password, name, rol, phone });
+            const newUser = await this.ClientsModel.createWorker({ email, password, name, rol_id, phone });
             await sendVerificationEmail(email, newUser.token);
             
             return res.status(201).json({
