@@ -1,10 +1,9 @@
-
-import axios from "axios";
+import { whatsapp } from "../lib/whatsapp.js";
 
 export const messager = async (tel, pedidoId, status) => {
     try {
         // Validaciones iniciales
-        console.log(tel, pedidoId, status)
+        console.log(tel,pedidoId,status)
         if (!tel || !pedidoId || !status) {
             console.error('❌ Faltan parámetros requeridos');
             return { success: false, error: 'Faltan parámetros requeridos' };
@@ -14,6 +13,23 @@ export const messager = async (tel, pedidoId, status) => {
         const telUser = tel
         const chatId = `521${telUser}@c.us`;
         console.log(`📞 Intentando enviar a: ${chatId}`);
+
+        
+
+        
+     
+
+        // Crear mensaje más personalizado y profesional
+        const messages = {
+            'pendiente': '⏳ Tu pedido ha sido recibido y está en espera de preparación.',
+            'preparando': '👨‍🍳 Tu pedido está siendo preparado en este momento.',
+            'listo': '✅ ¡Tu pedido está listo! Puedes pasar a recogerlo.',
+            'entregado': '🎉 ¡Pedido entregado! Gracias por tu compra.',
+            'cancelado': '❌ Tu pedido ha sido cancelado.'
+        };
+
+        const statusMessage = messages[status] || `El estado de tu pedido es: ${status}`;
+        
         const message = `Hola! 👋
 
 📦 *Actualización de tu Pedido #${pedidoId}*
