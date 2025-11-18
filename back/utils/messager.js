@@ -44,7 +44,7 @@ ${statusMessage}
 
 ¡Gracias por preferirnos! 🎉`;
 
-        const url = 'https://7107.api.green-api.com/waInstance7107381405/sendMessage/680be9abb292473f983a9f71e5e9a85c5fbd7560a314474da2'
+        const url = "https://7107.api.green-api.com/waInstance7107381405/sendMessage/680be9abb292473f983a9f71e5e9a85c5fbd7560a314474da2"
 
         const payload = {
             chatId: chatId,
