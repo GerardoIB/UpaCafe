@@ -30,6 +30,7 @@ const CardProducto = ({ producto, user }) => {
   }
 
   const token = localStorage.getItem("access_token"); // ✅ Traemos token aquí
+  console.log(token)
 
   if (!token) {
     Swal.fire("Inicia sesión", "Debes iniciar sesión para pedir.", "warning");
