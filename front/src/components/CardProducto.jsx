@@ -23,56 +23,66 @@ const CardProducto = ({ producto, user }) => {
     return <FaCoffee className="producto-icon" />;
   };
 
-  const handlePedidoRapido = async () => {
-    if (!user) {
-      Swal.fire("Inicia sesión", "Debes iniciar sesión para pedir.", "warning");
-      return;
-    }
+ const handlePedidoRapido = async () => {
+  if (!user) {
+    Swal.fire("Inicia sesión", "Debes iniciar sesión para pedir.", "warning");
+    return;
+  }
 
-    const pedido = {
-      clientId: user.id,
-      productos: [
-        {
-          producto_id: producto.id,
-          cantidad: 1,
-          indicaciones: "",
-          ingredientes_personalizados: [],
-        },
-      ],
-    };
+  const token = localStorage.getItem("access_token"); // ✅ Traemos token aquí
 
-    const confirmar = await Swal.fire({
-      title: `¿Pedir ${producto.nombre}?`,
-      text: `Confirmar pedido rápido`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Sí, pedir",
-      cancelButtonText: "Cancelar",
-      confirmButtonColor: "#2e7d32",
+  if (!token) {
+    Swal.fire("Inicia sesión", "Debes iniciar sesión para pedir.", "warning");
+    return;
+  }
+
+  const pedido = {
+    clientId: user.id,
+    productos: [
+      {
+        producto_id: producto.id,
+        cantidad: 1,
+        indicaciones: "",
+        ingredientes_personalizados: [],
+      },
+    ],
+  };
+
+  const confirmar = await Swal.fire({
+    title: `¿Pedir ${producto.nombre}?`,
+    text: `Confirmar pedido rápido`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Sí, pedir",
+    cancelButtonText: "Cancelar",
+    confirmButtonColor: "#2e7d32",
+  });
+
+  if (!confirmar.isConfirmed) return;
+
+  try {
+    setLoading(true);
+    const res = await fetch("https://upacafe.onrender.com/api/orders/createPedido", {
+      method: "POST",
+      headers: { 
+        "Content-Type": "application/json",
+        "Authorization": `Bearer ${token}` // ✅ enviar token correctamente
+      },
+      body: JSON.stringify(pedido),
     });
 
-    if (!confirmar.isConfirmed) return;
+    const data = await res.json();
 
-    try {
-      setLoading(true);
-      const res = await fetch("https://upacafe.onrender.com/api/orders/createPedido", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(pedido),
-      });
+    if (!res.ok) throw new Error(data.message || "Error al crear pedido");
 
-      const data = await res.json();
+    Swal.fire("✅ Pedido creado", `${producto.nombre} fue agregado correctamente.`, "success");
+  } catch (err) {
+    Swal.fire("Error", err.message, "error");
+  } finally {
+    setLoading(false);
+  }
+};
 
-      if (!res.ok) throw new Error(data.message || "Error al crear pedido");
-
-      Swal.fire("✅ Pedido creado", `${producto.nombre} fue agregado correctamente.`, "success");
-    } catch (err) {
-      Swal.fire("Error", err.message, "error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="producto-card">
