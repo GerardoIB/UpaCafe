@@ -7,30 +7,37 @@ const Home = () => {
   const [user, setUser] = useState(null);
 
   useEffect(() => {
-    const fetchProductos = async () => {
-      try {
-        const res = await fetch("https://upacafe.onrender.com/api/orders/productos", { credentials: "include" });
-        const data = await res.json();
-        setProductos(data);
-      } catch (err) {
-        console.error("Error al cargar productos:", err);
-      }
-    };
+  const fetchProductos = async () => {
+    try {
+      const res = await fetch("https://upacafe.onrender.com/api/orders/productos");
+      const data = await res.json();
+      setProductos(data);
+    } catch (err) {
+      console.error("Error al cargar productos:", err);
+    }
+  };
 
-    const checkUser = async () => {
-      try {
-        const res = await fetch("https://upacafe.onrender.com/api/user/protected", { credentials: "include" });
-        if (!res.ok) return;
-        const data = await res.json();
-        setUser(data.user || data);
-      } catch (e) {
-        console.error("Error al verificar sesión:", e);
-      }
-    };
+  const checkUser = async () => {
+    try {
+      const token = localStorage.getItem("access_token"); // ✅ siempre desde localStorage
+      if (!token) return;
 
-    checkUser();
-    fetchProductos();
-  }, []);
+      const res = await fetch("https://upacafe.onrender.com/api/user/protected", {
+        headers: { "Authorization": `Bearer ${token}` },
+      });
+      if (!res.ok) return;
+
+      const data = await res.json();
+      setUser(data.user || data);
+    } catch (e) {
+      console.error("Error al verificar sesión:", e);
+    }
+  };
+
+  checkUser();
+  fetchProductos();
+}, []);
+
 
   return (
     <div className="home-container">
