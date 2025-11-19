@@ -98,6 +98,9 @@ function AppContent() {
         setUser(data.user || data);
         setId(data.user?.id);
         setIsAuthenticated(true);
+        if (data.token) {
+    localStorage.setItem('access_token', data.token);
+  }
       } catch (e) {
         console.error('Error al verificar sesión:', e);
         setIsAuthenticated(false);
