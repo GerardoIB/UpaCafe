@@ -63,7 +63,7 @@ ${statusMessage}
 
 ¡Gracias por preferirnos! 🎉`;
 
-<<<<<<< HEAD
+
     // Enviar mensaje
     const sendUrl = "https://7107.api.green-api.com/waInstance7107381405/sendMessage/680be9abb292473f983a9f71e5e9a85c5fbd7560a314474da2";
     
@@ -71,9 +71,9 @@ ${statusMessage}
       chatId: chatId,
       message: message
     };
-=======
+
         const url = "https://7107.api.green-api.com/waInstance7107381405/sendMessage/680be9abb292473f983a9f71e5e9a85c5fbd7560a314474da2"
->>>>>>> 0151be3562efe1e49ab0a94a759cdbda00f3f5af
+
 
     const response = await axios.post(sendUrl, payload, {
       headers: {
@@ -126,7 +126,7 @@ ${statusMessage}
           };
       }
     }
-<<<<<<< HEAD
+
     
     return { 
       success: false, 
@@ -134,6 +134,4 @@ ${statusMessage}
     };
   }
 };
-=======
-}
->>>>>>> 0151be3562efe1e49ab0a94a759cdbda00f3f5af
+
