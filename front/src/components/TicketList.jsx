@@ -31,22 +31,22 @@ useEffect(() => {
 }, []);
 
 
-  return (
+return (
+  <>
     {tickets.length === 0 ? (
-  <p>No hay tickets disponibles.</p>
-) : (
-  
-    <div>
-      
-      <h1>🎟️ Lista de Tickets</h1>
-      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
-        {tickets.map(ticket => (
-          <Ticket key={ticket.ticket_id} ticket={ticket} />
-        ))}
+      <p>No hay tickets disponibles.</p>
+    ) : (
+      <div>
+        <h1>🎟️ Lista de Tickets</h1>
+        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '20px' }}>
+          {tickets.map(ticket => (
+            <Ticket key={ticket.ticket_id} ticket={ticket} />
+          ))}
+        </div>
       </div>
-    </div>
-      )}
-  );
+    )}
+  </>
+);
 };
 
 export default TicketsList;
