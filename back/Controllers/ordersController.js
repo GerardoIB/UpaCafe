@@ -157,8 +157,13 @@ export class OrdersController {
     }
     getTicketsByUserId = async (req, res) => {
         try {
-            console.log(req.cookies)
-            const token = req.cookies.access_token;
+             let token = req.cookies.access_token;
+        
+        // 2️⃣ Si no hay cookie, lee de Authorization header (móvil)
+        if (!token) {
+            const authHeader = req.headers['authorization'];
+            token = authHeader && authHeader.split(' ')[1];
+        }
             console.log(token)
             const JWT_SECRET = process.env.JWT_SECRET;
             const decoded = jwt.verify(token, JWT_SECRET);

@@ -41,7 +41,7 @@ ${statusMessage}
         messagingServiceSid: 'MGb7eab4d96febb70eeb3d737e1f07f507',
         to: `+52${tel}`
     })
-    console.log(console.log(res))
+    console.log(res.status)
    
 };
 
