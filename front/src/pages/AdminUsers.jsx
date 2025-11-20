@@ -123,9 +123,35 @@ const AdminUsers = () => {
   };
 
   // Eliminar usuario
-  const deleteUser = async (id) => {
+  const deleteAdmin = async (id) => {
     try {
-      const res = await fetch(`https://upacafe.onrender.com/api/user/deleteAdmin/${id}`, {
+      const res = await fetch(`https://upacafe.onrender.com/api/user//${id}`, {
+        method: 'DELETE',
+        credentials: 'include',
+      });
+
+      if (res.ok) {
+        setUsers(users.filter(u => u.id !== id));
+        toast.current.show({
+          severity: 'success',
+          summary: 'Eliminado',
+          detail: 'Usuario eliminado correctamente',
+          life: 3000
+        });
+      }
+    } catch (error) {
+      console.error(error);
+      toast.current.show({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'No se pudo eliminar el usuario',
+        life: 3000
+      });
+    }
+  };
+   const deleteUser = async (id) => {
+    try {
+      const res = await fetch(`https://upacafe.onrender.com/api/user/removeWorker/${id}`, {
         method: 'DELETE',
         credentials: 'include',
       });
