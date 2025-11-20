@@ -244,4 +244,21 @@ export class OrdersController {
             console.log(e)
         }
     }
+    getOrderDetails = async (req, res) => {
+    try {
+        const { id } = req.params;
+
+        const details = await this.ordersModel.getOrderDetails(id);
+
+        if (!details || details.length === 0) {
+            return res.status(404).json({ message: "Detalles no encontrados" });
+        }
+
+        res.status(200).json(details);
+    } catch (error) {
+        console.error(error);
+        res.status(500).json({ message: error.message });
+    }
+};
+
 }
