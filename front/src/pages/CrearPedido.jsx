@@ -54,26 +54,39 @@ const CrearPedido = () => {
   }, []);
 
   // Verificar usuario
-  useEffect(() => {
-    const checkUser = async () => {
-      try {
-        const res = await fetch("https://upacafe.onrender.com/api/user/protected", {
-          method: "GET",
-          credentials: "include",
-        });
-        if (!res.ok) {
-          setUser(null);
-          return;
+ // Verificar sesión con token (no cookies)
+useEffect(() => {
+  const checkUser = async () => {
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+      setUser(null);
+      return;
+    }
+
+    try {
+      const res = await fetch("https://upacafe.onrender.com/api/user/protected", {
+        headers: {
+          credentials:'include',
+          "Authorization": `Bearer ${token}`,
         }
-        const data = await res.json();
-        setUser(data.user || data);
-      } catch (e) {
-        console.error("Error al verificar sesión:", e);
+      });
+
+      if (res.status === 401) {
         setUser(null);
+        return;
       }
-    };
-    checkUser();
-  }, []);
+
+      const data = await res.json();
+      setUser(data.user || data);
+    } catch (e) {
+      console.error("Error al verificar sesión:", e);
+      setUser(null);
+    }
+  };
+  checkUser();
+}, []);
+
 
   const clientId = user ? user.id : null;
 
@@ -215,48 +228,77 @@ const CrearPedido = () => {
   };
 
   const enviarPedido = async () => {
-    setSubmitting(true);
-    const pedido = { clientId, productos };
+  setSubmitting(true);
 
-    try {
-      const res = await fetch("https://upacafe.onrender.com/api/orders/createPedido", {
-        method: "POST",
-        headers: { "Content-Type": "application/json" },
-        credentials: "include",
-        body: JSON.stringify(pedido),
-      });
-      const data = await res.json();
+  const token = localStorage.getItem("access_token");
 
-      if (!res.ok) throw new Error(data.message);
+  if (!token) {
+    toast.current.show({
+      severity: "warn",
+      summary: "Inicia sesión antes",
+      detail: "Tu sesión expiró, vuelve a iniciar sesión",
+      life: 4000,
+    });
+    setSubmitting(false);
+    return;
+  }
 
+  const pedido = { clientId: user.id, productos };
+
+  try {
+    const res = await fetch("https://upacafe.onrender.com/api/orders/createPedido", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        credentials:'include',
+        "Authorization": `Bearer ${token}`,
+         // 🔥 Igual que CardProducto
+      },
+      body: JSON.stringify(pedido),
+    });
+
+    if (res.status === 401) {
       toast.current.show({
-        severity: "success",
-        summary: "¡Pedido registrado!",
-        detail: "Tu pedido fue enviado correctamente",
+        severity: "warn",
+        summary: "Inicia sesión antes",
+        detail: "Debes iniciar sesión para continuar",
         life: 4000,
       });
-
-      // Resetear formulario
-      setProductos([
-        {
-          producto_id: null,
-          cantidad: 1,
-          indicaciones: "",
-          ingredientes_personalizados: [],
-          ingredientesDisponibles: [],
-        },
-      ]);
-    } catch (err) {
-      toast.current.show({
-        severity: "error",
-        summary: "Error",
-        detail: err.message,
-        life: 4000,
-      });
-    } finally {
-      setSubmitting(false);
+      return;
     }
-  };
+
+    const data = await res.json();
+
+    if (!res.ok) throw new Error(data.message);
+
+    toast.current.show({
+      severity: "success",
+      summary: "¡Pedido registrado!",
+      detail: "Tu pedido fue enviado correctamente",
+      life: 4000,
+    });
+
+    setProductos([
+      {
+        producto_id: null,
+        cantidad: 1,
+        indicaciones: "",
+        ingredientes_personalizados: [],
+        ingredientesDisponibles: [],
+      },
+    ]);
+  } catch (err) {
+    toast.current.show({
+      severity: "error",
+      summary: "Error",
+      detail: err.message,
+      life: 4000,
+    });
+  } finally {
+    setSubmitting(false);
+  }
+};
+
 
   // Template para producto en dropdown
   const productoOptionTemplate = (option) => {

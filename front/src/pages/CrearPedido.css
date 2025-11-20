@@ -1,244 +1,152 @@
-/* ===========================================
-     CONTENEDOR GENERAL
-=========================================== */
+/* ================================
+   CONTENEDOR PRINCIPAL
+================================= */
 .crear-pedido-container-prime {
   padding: 30px;
   background: linear-gradient(135deg, #f7fdf9 0%, #e8f5e9 100%);
   min-height: calc(100vh - 60px);
-  max-width: 900px;
+  max-width: 1200px;
+  width: 100%;
   margin: 0 auto;
-}
-
-/* ===========================================
-     HEADER
-=========================================== */
-.page-header-pedido {
-  text-align: center;
-  margin-bottom: 35px;
-  animation: fadeIn 0.5s ease;
-}
-
-.page-header-pedido h1 {
-  color: #2e7d32;
-  font-size: 2.4rem;
-  font-weight: 700;
-  margin-bottom: 8px;
+  background-size: cover;
   display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 12px;
+  flex-direction: column;
+  gap: 25px;
 }
 
-.page-header-pedido h1 i {
-  font-size: 2.4rem;
+/* ================================
+   TITULOS
+================================= */
+.crear-pedido-title {
+  font-size: 2rem;
+  font-weight: 600;
+  text-align: center;
+  color: #2e7d32;
+  margin-bottom: 20px;
 }
 
-.page-header-pedido .subtitle {
-  color: #666;
-  font-size: 1.1rem;
-}
-
-/* ===========================================
-     PRODUCTO CARD
-=========================================== */
+/* ================================
+   CARD DE PRODUCTO
+================================= */
 .producto-card {
-  background: white !important;
-  border-radius: 16px !important;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08) !important;
-  border: none !important;
-  margin-bottom: 25px;
-  animation: slideIn 0.35s ease;
-  transition: all 0.25s ease;
-}
-
-.producto-card:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1) !important;
+  width: 100%;
 }
 
 .producto-card .p-card-body {
-  padding: 25px !important;
+  width: 100%;
+  padding: 20px;
 }
 
-/* ===========================================
-     HEADER DEL PRODUCTO
-=========================================== */
-.producto-header {
+/* ================================
+   LAYOUT DE FORMULARIO
+================================= */
+.form-section {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 20px;
+  width: 100%;
+}
+
+/* Contenedor de cada campo */
+.form-field {
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+}
+
+.form-field label {
+  font-weight: 500;
+  color: #333;
+  font-size: 0.95rem;
+}
+
+/* Inputs PrimeReact */
+.p-inputtext,
+.p-password-input,
+.p-dropdown,
+.p-calendar {
+  width: 100% !important;
+}
+
+/* ================================
+   BOTONERA
+================================= */
+.pedido-buttons {
+  display: flex;
+  justify-content: center;
+  gap: 15px;
+  margin-top: 20px;
+}
+
+.p-button-success {
+  background-color: #2e7d32 !important;
+  border-color: #2e7d32 !important;
+}
+
+.p-button-success:hover {
+  background-color: #1b5e20 !important;
+}
+
+/* ================================
+   CARD DE RESUMEN
+================================= */
+.resumen-card {
+  width: 100%;
+}
+
+.resumen-card .p-card-body {
+  padding: 20px;
+}
+
+.resumen-total {
+  font-size: 1.3rem;
+  font-weight: 600;
+  text-align: right;
+  color: #2e7d32;
+}
+
+/* ================================
+   SECCIÓN DE LISTA DE PRODUCTOS
+================================= */
+.product-list-item {
+  border: 1px solid #d9d9d9;
+  padding: 10px;
+  border-radius: 6px;
+  margin-bottom: 10px;
+  background: #ffffff;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  margin-bottom: 10px;
 }
 
-.producto-header h3 {
-  color: #2e7d32;
-  font-size: 1.25rem;
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  margin: 0;
+.product-list-item span {
+  font-size: 1rem;
+  font-weight: 500;
 }
 
-/* ===========================================
-     CAMPOS
-=========================================== */
-.field-section {
-  margin-bottom: 22px;
+/* Botón eliminar */
+.delete-btn {
+  background: #d32f2f !important;
+  border: none;
 }
 
-.field-label {
-  font-weight: 600;
-  color: #333;
-  margin-bottom: 10px;
-  display: flex;
-  gap: 8px;
-  align-items: center;
+.delete-btn:hover {
+  background: #b71c1c !important;
 }
 
-.field-label i {
-  color: #2e7d32;
-}
-
-/* ===========================================
-     INGREDIENTES GRID
-=========================================== */
-.ingredientes-section-prime {
-  background: #f3faf4;
-  padding: 17px;
-  border-radius: 12px;
-  border: 2px solid rgba(46, 125, 50, 0.1);
-}
-
-.ingredientes-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
-  gap: 12px;
-}
-
-.ingrediente-checkbox {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-  padding: 12px;
-  border-radius: 8px;
-  background: white;
-  border: 2px solid #e0e0e0;
-  cursor: pointer;
-  transition: 0.25s;
-}
-
-.ingrediente-checkbox:hover {
-  border-color: #66bb6a;
-}
-
-.ingrediente-checkbox label.ingrediente-quitado {
-  text-decoration: line-through;
-  color: #d32f2f;
-}
-
-/* ===========================================
-     RESUMEN DEL PRODUCTO
-=========================================== */
-.producto-resumen {
-  background: #fff3e0;
-  padding: 15px;
-  border-radius: 8px;
-  margin-top: 15px;
-  border-left: 4px solid #ff9800;
-}
-
-/* ===========================================
-     BOTONES
-=========================================== */
-.actions-container {
-  display: flex;
-  gap: 15px;
-  margin-top: 25px;
-  flex-wrap: wrap;
-}
-
-.actions-container .p-button {
-  flex: 1;
-  min-width: 200px;
-}
-
-/* ===========================================
-     ANIMACIONES
-=========================================== */
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    translate: 0 -10px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-@keyframes slideIn {
-  from {
-    opacity: 0;
-    translate: 0 20px;
-  }
-  to {
-    opacity: 1;
-    translate: 0 0;
-  }
-}
-
-/* ===========================================
-     RESPONSIVO
-=========================================== */
+/* ================================
+   RESPONSIVE
+================================= */
 @media (max-width: 768px) {
   .crear-pedido-container-prime {
-    padding: 20px 12px;
+    padding: 20px;
   }
 
-  .page-header-pedido h1 {
-    font-size: 1.7rem;
+  .crear-pedido-title {
+    font-size: 1.6rem;
+  }
+
+  .pedido-buttons {
     flex-direction: column;
-    gap: 5px;
-  }
-
-  .producto-card .p-card-body {
-    padding: 18px !important;
-  }
-
-  .ingredientes-grid {
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
-  }
-
-  .actions-container {
-    flex-direction: column;
-  }
-}
-
-@media (max-width: 480px) {
-  .page-header-pedido h1 {
-    font-size: 1.5rem;
-  }
-
-  .producto-header {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 8px;
-  }
-
-  .ingredientes-grid {
-    grid-template-columns: 1fr;
-  }
-
-  .actions-container .p-button {
-    min-width: 100%;
-  }
-}
-.precio-tag {
-  font-size: .9rem !important;
-}
-@media (max-width:480px){
-  .precio-tag{
-    font-size:.8rem !important;
-    padding:6px 10px !important;
   }
 }
