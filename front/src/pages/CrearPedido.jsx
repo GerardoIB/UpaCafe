@@ -67,9 +67,10 @@ useEffect(() => {
     try {
       const res = await fetch("https://upacafe.onrender.com/api/user/protected", {
         headers: {
-          credentials:'include',
           "Authorization": `Bearer ${token}`,
-        }
+        },
+        credentials: "include",
+
       });
 
       if (res.status === 401) {
@@ -213,19 +214,22 @@ useEffect(() => {
       .join("");
 
     confirmDialog({
-      message: (
-        <div>
-          <p style="margin-bottom: 15px; font-size: 1.1em;">¿Confirmas tu pedido?</p>
-          <div dangerouslySetInnerHTML={{ __html: resumenHTML }} />
-        </div>
-      ),
-      header: "Confirmar Pedido",
-      icon: "pi pi-shopping-cart",
-      acceptLabel: "Sí, confirmar",
-      rejectLabel: "Cancelar",
-      accept: enviarPedido,
-    });
-  };
+  message: (
+    <div>
+      <p style={{ marginBottom: "15px", fontSize: "1.1em" }}>
+        ¿Confirmas tu pedido?
+      </p>
+
+      <div dangerouslySetInnerHTML={{ __html: resumenHTML }} />
+    </div>
+  ),
+  header: "Confirmar Pedido",
+  icon: "pi pi-shopping-cart",
+  acceptLabel: "Sí, confirmar",
+  rejectLabel: "Cancelar",
+  accept: enviarPedido,
+});
+  }
 
   const enviarPedido = async () => {
   setSubmitting(true);
@@ -250,10 +254,10 @@ useEffect(() => {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        credentials:'include',
         "Authorization": `Bearer ${token}`,
          // 🔥 Igual que CardProducto
       },
+      credentials: "include",
       body: JSON.stringify(pedido),
     });
 

@@ -671,3 +671,24 @@
 .notification-panel {
   z-index: 500;
 }
+/* --- FIX PARA PRIMEREACT TOAST --- */
+.p-toast .p-toast-message .p-toast-summary,
+.p-toast .p-toast-message .p-toast-detail {
+  color: #333 !important;
+}
+
+/* Colores según tipo de mensaje */
+.p-toast-message-success .p-toast-summary,
+.p-toast-message-success .p-toast-detail {
+  color: #1b5e20 !important;
+}
+
+.p-toast-message-error .p-toast-summary,
+.p-toast-message-error .p-toast-detail {
+  color: #b71c1c !important;
+}
+
+.p-toast-message-warn .p-toast-summary,
+.p-toast-message-warn .p-toast-detail {
+  color: #8a6d3b !important;
+}
