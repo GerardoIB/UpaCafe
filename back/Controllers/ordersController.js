@@ -236,6 +236,7 @@ export class OrdersController {
         try{
             const id = req.params
             const result = this.ordersModel.deleteIngrediente(id)
+            console.log(result)
             res.status(200).json({message:"Este ingrediente ha sido eiminado"})
 
         }catch(e){
