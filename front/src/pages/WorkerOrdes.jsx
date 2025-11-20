@@ -5,7 +5,7 @@ import "../css/Orders.css";
 const WorkerOrders = () => {
   const [orders, setOrders] = useState([]);
   const [loading, setLoading] = useState(true);
-
+  const token = localStorage.getItem("access_token");
   useEffect(() => {
     fetch("https://upacafe.onrender.com/api/orders/allOrders", {
       method: "GET",
@@ -21,6 +21,8 @@ const WorkerOrders = () => {
         setLoading(false);
       });
   }, []);
+
+
 
   const handleStatusChange = async (orderId, nuevoEstado) => {
     try {
@@ -44,11 +46,12 @@ const WorkerOrders = () => {
   };
     console.log(handleStatusChange)
   if (loading) return <div className="loading-screen">Cargando pedidos...</div>;
+console.log("FUNCION PASADA:", handleViewDetails);
 
   return (
     <div className="orders-page">
       <h1>📦 Todos los pedidos</h1>
-      <OrderTable orders={orders} onStatusChange={handleStatusChange} />
+      <OrderTable orders={orders} onStatusChange={handleStatusChange} onViewDetails={handleViewDetails} />
     </div>
   );
 };

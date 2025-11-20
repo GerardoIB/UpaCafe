@@ -3,8 +3,8 @@ import { Dropdown } from "primereact/dropdown";
 import { Button } from "primereact/button";
 import "./OrdersTable.css";
 
-const OrderTable = ({ orders, onStatusChange }) => {
-  console.log("onStatusChange recibido:", typeof onStatusChange);
+const OrderTable = ({ orders, onStatusChange, onViewDetails }) => {
+  console.log("onStatusChange recibido:", typeof onViewDetails);
 
   if (!orders || orders.length === 0) {
     return <p className="no-orders">No hay pedidos registrados.</p>;
@@ -81,6 +81,12 @@ const OrderTable = ({ orders, onStatusChange }) => {
                   tooltip="Actualizar estado"
                   tooltipOptions={{ position: "top" }}
                 />
+                <Button
+  label="Ver detalles"
+  className="p-button-info p-button-sm"
+  onClick={() => onViewDetails(order.id)}
+/>
+
               </div>
             </td>
           </tr>
