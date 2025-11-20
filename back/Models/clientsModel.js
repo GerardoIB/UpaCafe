@@ -144,14 +144,14 @@ export class ClientsModel {
   }
   static async deleteWoroker(userId) {
     const [result] = await conection.query(
-      'DELETE FROM usuarios WHERE id = ? AND rol_id = 2',
+      'DELETE FROM usuarios WHERE id = ?',
       [userId]
     );
     return result;
   }
   static async deleteAdmin(userId) {
     const [result] = await conection.query(
-      'DELETE FROM usuarios WHERE id = ? AND rol_id = 1',
+      'DELETE FROM usuarios WHERE id = ? ',
       [userId]
     );
     return result;

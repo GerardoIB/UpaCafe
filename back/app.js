@@ -26,9 +26,12 @@ app.use('/api/orders', createRouterOrders({ordersModel,io}))
 app.use('/api/user',createRouter({ClientsModel,io}))
 
            
+app.post("/hello",(req,res) => {
+  const {name} = req.body
+  res.json({message:'HelloWorld ' + name})
+})
 
-
-const PORT = process.env.PORT ?? 3000;
+const PORT = process.env.PORT ?? 3001;
 
 // Usa el servidor HTTP, no app.listen()
 server.listen(PORT, () => {
