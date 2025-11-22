@@ -1,37 +1,34 @@
-import pkg from "whatsapp-web.js";
-const { Client, LocalAuth } = pkg;
-import qrcode from 'qrcode-terminal';
+import makeWASocket, { useMultiFileAuthState } from "@whiskeysockets/baileys";
+import qrcode from "qrcode-terminal";
+import fs from "fs";
+import path from "path";
 
-export const whatsapp = new Client({
-    authStrategy: new LocalAuth(),
-    puppeteer: {
-        headless: true,
-        args: [
-            '--no-sandbox',
-            '--disable-setuid-sandbox',
-            '--disable-dev-shm-usage',
-            '--disable-accelerated-2d-canvas',
-            '--no-first-run',
-            '--no-zygote',
-            '--single-process',
-            '--disable-gpu'
-        ],
-        executablePath: process.env.PUPPETEER_EXECUTABLE_PATH || '/usr/bin/chromium'
+export async function startWhatsapp() {
+    const sessionPath = "/tmp/baileys_auth";
+
+    if (!fs.existsSync(sessionPath)) {
+        fs.mkdirSync(sessionPath, { recursive: true });
     }
-});
 
-whatsapp.on('qr', qr => {
-    qrcode.generate(qr, { small: true });
-});
+    const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
 
-whatsapp.on('ready', () => {
-    console.log('Client is ready');
-});
+    const sock = makeWASocket({
+        printQRInTerminal: true,
+        auth: state,
+    });
 
-whatsapp.on('auth_failure', (msg) => {
-    console.error('Authentication failure', msg);
-});
+    sock.ev.on("creds.update", saveCreds);
 
-whatsapp.on('disconnected', (reason) => {
-    console.log('Client was logged out', reason);
-});
+    sock.ev.on("connection.update", (update) => {
+        const { connection, qr } = update;
+
+        if (qr) qrcode.generate(qr, { small: true });
+        if (connection === "open") console.log("WhatsApp conectado ✔");
+        if (connection === "close") {
+            console.log("Reconectando...");
+            startWhatsapp();
+        }
+    });
+
+    return sock;
+}

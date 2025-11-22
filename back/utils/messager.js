@@ -1,14 +1,19 @@
-import axios from "axios";
+import e from 'express';
+import { startWhatsapp } from '../lib/whatsapp.js';
 import twilio from 'twilio'
 const client = twilio(
   process.env.TWILIO_ACCOUNT_SID,
   process.env.TWILIO_AUTH_TOKEN
 );
+
     
 export const messager = async (tel, pedidoId, status) => {
+    let client;
+    (async () => {
+        client = await startWhatsapp()
+    })()
  
- 
-  
+    
    
     // Mensajes personalizados
     const messages = {
@@ -34,14 +39,9 @@ ${statusMessage}
 
 ¡Gracias por preferirnos! 🎉`;
 
-
-    // Enviar mensaje
-    const res = await client.messages.create({
-        body:message,
-        messagingServiceSid: 'MGb7eab4d96febb70eeb3d737e1f07f507',
-        to: `+52${tel}`
-    })
-    console.log(res.status)
+    const chatId = `+521${tel.replace(/\D/g, '')}@c.us`; // Formato internacional para WhatsApp
+    client.sendMessage(chatId, message);
+    console.log('Mensaje enviado a WhatsApp:', chatId);
    
 };
 

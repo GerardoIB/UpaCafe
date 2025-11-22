@@ -249,10 +249,12 @@ export class OrdersController {
         const { id } = req.params;
 
         const details = await this.ordersModel.getOrderDetails(id);
+        console.log(details);
 
         if (!details || details.length === 0) {
             return res.status(404).json({ message: "Detalles no encontrados" });
         }
+        
 
         res.status(200).json(details);
     } catch (error) {

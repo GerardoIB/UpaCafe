@@ -8,7 +8,7 @@ import { ClientsModel } from './Models/clientsModel.js'
 import { ordersModel } from './Models/ordersModel.js'
 import cookieParser from 'cookie-parser'
 import { corsMiddleware } from './middelwares/cors.js'
-import { whatsapp } from './lib/whatsapp.js'
+
 
 dotenv.config()
 
