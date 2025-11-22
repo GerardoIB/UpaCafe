@@ -5,5 +5,5 @@ upas1.sql
 .wwebjs_auth
 .wwebjs_cache
 .env
-
+sessions/
 
