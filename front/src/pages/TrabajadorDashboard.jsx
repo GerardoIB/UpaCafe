@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import OrderTable from "../components/OrdersTable";
-import OrderDetailsModal from "../components/OrderDatilsModal";
+import OrderDetailsModal from "../components/OrderDatilsModal"; // ← Corrige el nombre aquí
 import "../css/Orders.css";
 
 const TrabajadorDashboard = () => {
@@ -9,7 +9,8 @@ const TrabajadorDashboard = () => {
   const token = localStorage.getItem("acces_token");
 
   const [modalVisible, setModalVisible] = useState(false);
-  const [selectedOrderInfo, setSelectedOrderInfo] = useState(null);
+  const [selectedOrderDetails, setSelectedOrderDetails] = useState([]); // ← Array de productos
+  const [selectedOrderInfo, setSelectedOrderInfo] = useState(null); // ← Info del pedido
 
   const handleViewDetails = async (orderId) => {
     try {
@@ -25,27 +26,19 @@ const TrabajadorDashboard = () => {
         }
       );
 
-      const data = await res.json(); // ← ARRAY DE DETALLES
-      console.log("Detalles del pedido:", data);
+      const productosData = await res.json(); // Array de productos
+      console.log("Productos del pedido:", productosData);
 
-      // Transformación correcta
-      const productos = data.map((item) => ({
-        ...item,
-        subtotal: Number(item.precio_unitario) * Number(item.cantidad),
-      }));
+      // Busca la información del pedido en la lista de orders
+      const orderInfo = orders.find(o => o.id === orderId);
+      console.log("Info del pedido:", orderInfo);
 
-      const total = productos.reduce((acc, item) => acc + item.subtotal, 0);
-
-      const orderFormatted = {
-        id: orderId,
-        total,
-        productos,
-      };
-
-      setSelectedOrderInfo(orderFormatted);
+      // Actualiza los estados separados
+      setSelectedOrderDetails(productosData); // Array de productos
+      setSelectedOrderInfo(orderInfo); // Info del pedido (id, usuario, fecha, total, estado)
       setModalVisible(true);
     } catch (err) {
-      console.error(err);
+      console.error("Error al cargar detalles:", err);
     }
   };
 
@@ -106,7 +99,8 @@ const TrabajadorDashboard = () => {
       <OrderDetailsModal
         visible={modalVisible}
         onHide={() => setModalVisible(false)}
-        orderInfo={selectedOrderInfo}
+        orderDetails={selectedOrderDetails} // ← Array de productos
+        orderInfo={selectedOrderInfo} // ← Info del pedido completa
       />
     </div>
   );
