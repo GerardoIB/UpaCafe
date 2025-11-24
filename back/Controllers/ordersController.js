@@ -134,7 +134,7 @@ export class OrdersController {
             if (!newState) {
                 return res.status(400).json({ message: 'Nuevo estado requerido' });
             }
-
+            console.log(pedidoId, newState)
             await this.ordersModel.updateOrderStatus({ pedidoId, newState });
             const user = await this.ordersModel.getPhoneUser(pedidoId)
             console.log(user)

@@ -1,7 +1,8 @@
 import makeWASocket, { useMultiFileAuthState } from "@whiskeysockets/baileys";
 import qrcode from "qrcode-terminal";
 import fs from "fs";
-import path from "path";
+
+let sock; // 💡 VARIABLE GLOBAL QUE SE EXPORTA
 
 export async function startWhatsapp() {
     const sessionPath = "/tmp/baileys_auth";
@@ -12,7 +13,7 @@ export async function startWhatsapp() {
 
     const { state, saveCreds } = await useMultiFileAuthState(sessionPath);
 
-    const sock = makeWASocket({
+    sock = makeWASocket({
         printQRInTerminal: true,
         auth: state,
     });
@@ -30,5 +31,10 @@ export async function startWhatsapp() {
         }
     });
 
+    return sock;
+}
+
+// ⬅️ Ahora sí devuelve el socket real
+export function getWhatsappClient() {
     return sock;
 }

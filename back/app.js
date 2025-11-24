@@ -8,7 +8,7 @@ import { ClientsModel } from './Models/clientsModel.js'
 import { ordersModel } from './Models/ordersModel.js'
 import cookieParser from 'cookie-parser'
 import { corsMiddleware } from './middelwares/cors.js'
-
+import { startWhatsapp } from './lib/whatsapp.js'
 
 dotenv.config()
 
@@ -24,7 +24,7 @@ app.use(cookieParser())
 app.use(express.json())
 app.use('/api/orders', createRouterOrders({ordersModel,io}))
 app.use('/api/user',createRouter({ClientsModel,io}))
-
+startWhatsapp()
            
 app.post("/hello",(req,res) => {
   const {name} = req.body

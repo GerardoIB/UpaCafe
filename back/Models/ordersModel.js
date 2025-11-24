@@ -15,6 +15,7 @@ const conection = await mysql.createConnection(connectionString);
 
 export class ordersModel {
     static async createProducto({ nombre, descripcion, precio, disponible }) {
+        disponible = 1
         const [result] = await conection.query(
             `INSERT INTO productos (nombre,descripcion,precio,disponible) VALUES (?,?,?,?)`,
             [nombre, descripcion, precio, disponible]
